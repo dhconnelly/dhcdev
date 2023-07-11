@@ -1,56 +1,43 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"net/url"
-	"time"
+	"strconv"
 )
 
 type observedResponseWriter struct {
 	http.ResponseWriter
-	req *http.Request
-}
-
-type request struct {
-	time      time.Time
-	client    string
-	userAgent string
-	method    string
-	host      string
-	url       *url.URL
-	status    int
-}
-
-func (req request) String() string {
-	return fmt.Sprintf(
-		`%s "%s" %s %s %s %d`,
-		req.client, req.userAgent, req.method, req.host, req.url, req.status)
+	req      *http.Request
+	counters *counters
 }
 
 func (o observedResponseWriter) WriteHeader(statusCode int) {
-	e := request{
-		time:      time.Now(),
-		client:    o.req.RemoteAddr,
-		userAgent: o.req.UserAgent(),
-		method:    o.req.Method,
-		host:      o.req.Host,
-		url:       o.req.URL,
-		status:    statusCode,
-	}
-	log.Println(e)
+	log.Printf(
+		`%s "%s" %s %s %s %d`,
+		o.req.RemoteAddr, o.req.UserAgent(), o.req.Method, o.req.Host,
+		o.req.URL.String(), statusCode)
 	o.ResponseWriter.WriteHeader(statusCode)
+	o.counters.resps.Add(1)
+	o.counters.statusCodes.Add(strconv.Itoa(statusCode), 1)
+	// only record pages where load succeeds so caller can't oom us
+	if statusCode < 400 {
+		o.counters.pages.Add(o.req.URL.String(), 1)
+	}
 }
 
-func observe(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		o := observedResponseWriter{res, req}
-		h.ServeHTTP(&o, req)
-	})
+type observedHandler struct {
+	h        http.Handler
+	counters counters
 }
 
-func handler(serveDir string) http.Handler {
+func (s *observedHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+	s.counters.reqs.Add(1)
+	o := observedResponseWriter{res, req, &s.counters}
+	s.h.ServeHTTP(&o, req)
+}
+
+func newHandler(serveDir string, counters counters) http.Handler {
 	fs := http.FileServer(http.Dir(serveDir))
-	return observe(fs)
+	return &observedHandler{h: fs, counters: counters}
 }

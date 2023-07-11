@@ -15,14 +15,11 @@ var (
 func main() {
 	flag.Parse()
 
-	// TODO: set up logs
-	// TODO: set up metrics
-	// TODO: set up traces
 	// TODO: set up in-memory cache
 
 	log.Println("serving static files from:", *serveDir)
 	log.Println("serving on port:", *port)
-	http.Handle("/", handler(*serveDir))
+	http.Handle("/", newHandler(*serveDir, newCounters()))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", *port), nil); err != nil {
 		log.Println("fatal:", err)
 	}
