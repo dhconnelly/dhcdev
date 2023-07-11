@@ -1,31 +1,42 @@
-name: Docker Image CI
+name: CI/CD
 
 on:
-  push:
-    branches: [ "main" ]
+    push:
+        branches: ["main"]
 
 jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3
+        - name: Set up Go
+            uses: actions/setup-go@v4
+            with:
+                go-version: '1.20'
+        - name: Build
+            run: go build -v ./...
+        - name: Test
+            run: go test -v ./...
 
-  build:
-    runs-on: ubuntu-latest
+    deploy:
+        runs-on: ubuntu-latest
 
-    # build and push to digital ocean
-    # taken from https://github.com/digitalocean/sample-push-to-deploy-doks
-    steps:
+        # build and push to digital ocean
+        # taken from https://github.com/digitalocean/sample-push-to-deploy-doks
+        steps:
+            - name: Check out main
+              uses: actions/checkout@v3
 
-    - name: Check out main
-      uses: actions/checkout@v3
+            - name: Install doctl
+              uses: digitalocean/action-doctl@v2
+              with:
+                  token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-    
-    - name: Build container image
-      run: docker build -t ${{ secrets.REGISTRY_NAME }}/dhcdev:latest .
+            - name: Build container image
+              run: docker build -t ${{ secrets.REGISTRY_NAME }}/dhcdev:latest -t ${{ secrets.REGISTRY_NAME }}/dhcdev:$(echo $GITHUB_SHA | head -c7) .
 
-    - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      run: doctl registry login --expiry-seconds 1200
+            - name: Log in to DigitalOcean Container Registry with short-lived credentials
+              run: doctl registry login --expiry-seconds 1200
 
-    - name: Push image to DigitalOcean Container Registry
-      run: docker push ${{ secrets.REGISTRY_NAME }}/dhcdev:latest
+            - name: Push image to DigitalOcean Container Registry
+              run: docker push ${{ secrets.REGISTRY_NAME }}/dhcdev
