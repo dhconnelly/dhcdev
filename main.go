@@ -15,10 +15,9 @@ var (
 func main() {
 	flag.Parse()
 
-	// TODO: set up events
+	// TODO: set up logs
 	// TODO: set up metrics
 	// TODO: set up traces
-	// TODO: set up health check
 	// TODO: set up in-memory cache
 
 	log.Println("serving static files from:", *serveDir)

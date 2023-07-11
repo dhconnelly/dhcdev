@@ -11,6 +11,9 @@ import (
 )
 
 func buildFile(dst io.Writer, src io.Reader) error {
+	// TODO: handle headers
+	// TODO: handle templates
+	// TODO: build markdown files
 	_, err := io.Copy(dst, src)
 	return err
 }
