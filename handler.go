@@ -18,14 +18,15 @@ type request struct {
 	client    string
 	userAgent string
 	method    string
+	host      string
 	url       *url.URL
 	status    int
 }
 
 func (req request) String() string {
 	return fmt.Sprintf(
-		`%s "%s" %s %s %d`,
-		req.client, req.userAgent, req.method, req.url, req.status)
+		`%s "%s" %s %s %s %d`,
+		req.client, req.userAgent, req.method, req.host, req.url, req.status)
 }
 
 func (o observedResponseWriter) WriteHeader(statusCode int) {
@@ -34,6 +35,7 @@ func (o observedResponseWriter) WriteHeader(statusCode int) {
 		client:    o.req.RemoteAddr,
 		userAgent: o.req.UserAgent(),
 		method:    o.req.Method,
+		host:      o.req.Host,
 		url:       o.req.URL,
 		status:    statusCode,
 	}
