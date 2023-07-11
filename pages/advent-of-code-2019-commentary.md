@@ -1,8 +1,6 @@
 ---
-layout: post
 title: "Advent of Code 2019: Commentary"
 date: 2019-12-01
-permalink: /advent-of-code-2019-commentary.html
 ---
 
 Here's my running commentary on [Advent of Code
