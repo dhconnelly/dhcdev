@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"io/fs"
 	"log"
@@ -14,29 +15,36 @@ func buildFile(dst io.Writer, src io.Reader) error {
 	return err
 }
 
+func makeDstPath(srcDir, dstDir, filePath string) (string, error) {
+	relPath, err := filepath.Rel(srcDir, filePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to get relative dest path: %w", err)
+	}
+	dstPath := path.Join(dstDir, relPath)
+	if err := os.MkdirAll(path.Dir(dstPath), 0755); err != nil {
+		return "", fmt.Errorf("failed to make dest dirs: %w", err)
+	}
+	return dstPath, nil
+}
+
 func visitor(dstDir, srcDir string) fs.WalkDirFunc {
 	return func(filePath string, d fs.DirEntry, err error) error {
 		if err != nil {
+			// unknown i/o error: abort
 			log.Println("error:", err)
-			return nil // keep going
+			return fs.SkipAll
 		}
+
 		if d.IsDir() {
 			return nil // keep going
 		}
 
-		// prep the output
-		relPath, err := filepath.Rel(srcDir, filePath)
+		dstPath, err := makeDstPath(srcDir, dstDir, filePath)
 		if err != nil {
-			log.Println("failed to get relative destination path:", err)
-			return nil // keep going
-		}
-		dstPath := path.Join(dstDir, relPath)
-		if err := os.MkdirAll(path.Dir(dstPath), 0755); err != nil {
 			log.Println("error:", err)
 			return nil // keep going
 		}
 
-		// open the files
 		src, err := os.Open(filePath)
 		if err != nil {
 			log.Println("error opening src:", err)
@@ -44,7 +52,6 @@ func visitor(dstDir, srcDir string) fs.WalkDirFunc {
 		}
 		defer src.Close()
 
-		// don't copy the src prefix
 		dst, err := os.Create(dstPath)
 		if err != nil {
 			log.Println("error opening dst:", err)
@@ -52,10 +59,10 @@ func visitor(dstDir, srcDir string) fs.WalkDirFunc {
 		}
 		defer dst.Close()
 
-		// build
 		if err := buildFile(dst, src); err != nil {
 			log.Printf("error building file %s: %s", filePath, err)
 		}
+
 		return nil // keep going
 	}
 }
