@@ -28,4 +28,4 @@ jobs:
       run: doctl registry login --expiry-seconds 1200
 
     - name: Push image to DigitalOcean Container Registry
-      run: docker push ${{ secrets.REGISTRY_NAME }}/dhcdev:latest .
+      run: docker push ${{ secrets.REGISTRY_NAME }}/dhcdev:latest
