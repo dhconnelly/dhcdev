@@ -30,12 +30,12 @@ func makeDstPath(srcDir, dstDir, filePath string) (string, error) {
 	return dstPath, nil
 }
 
-func visitor(dstDir, srcDir string) fs.WalkDirFunc {
+func walk(dstDir, srcDir string) fs.WalkDirFunc {
 	return func(filePath string, d fs.DirEntry, err error) error {
 		if err != nil {
 			// unknown i/o error: abort
 			log.Println("error:", err)
-			return fs.SkipAll
+			return err
 		}
 
 		if d.IsDir() {
@@ -44,7 +44,7 @@ func visitor(dstDir, srcDir string) fs.WalkDirFunc {
 
 		dstPath, err := makeDstPath(srcDir, dstDir, filePath)
 		if err != nil {
-			log.Println("error:", err)
+			log.Println("error creating dest path:", err)
 			return nil // keep going
 		}
 
@@ -70,8 +70,7 @@ func visitor(dstDir, srcDir string) fs.WalkDirFunc {
 	}
 }
 
-func buildTree(dst, src string) error {
-	log.Printf("building files from %s into %s", dst, src)
-	fs.WalkDir(os.DirFS("."), src, visitor(dst, src))
-	return nil
+func BuildTree(dst, src string) error {
+	log.Printf("building files from %s into %s", src, dst)
+	return filepath.WalkDir(src, walk(dst, src))
 }
