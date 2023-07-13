@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-func buildFile(dst io.Writer, src io.Reader) error {
+func BuildFile(dst io.Writer, src io.Reader) error {
 	// TODO: handle headers
 	// TODO: handle templates
 	// TODO: build markdown files
@@ -62,7 +62,7 @@ func walk(dstDir, srcDir string) fs.WalkDirFunc {
 		}
 		defer dst.Close()
 
-		if err := buildFile(dst, src); err != nil {
+		if err := BuildFile(dst, src); err != nil {
 			log.Printf("error building file %s: %s", filePath, err)
 		}
 
