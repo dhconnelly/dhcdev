@@ -1,6 +1,6 @@
----
-title: "Advent of Code 2019: Retrospective"
----
+=== Advent of Code 2019: Retrospective ===
+
+# Advent of Code 2019: Retrospective
 
 _December 27, 2019_
 

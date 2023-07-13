@@ -10,9 +10,7 @@ this is very simple:
 
 Markdown (.md) files should have the form:
 
-    --
-    title: $TITLE
-    --
+    === $TITLE ===
     $MARKDOWN
 
 The `$MARKDOWN` content will be rendered from Markdown into HTML and the

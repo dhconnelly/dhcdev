@@ -6,7 +6,8 @@ FROM golang:1.20 AS build-stage
 
 # set up the module
 WORKDIR /app
-COPY go.mod ./
+COPY go.mod go.sum ./
+RUN go mod download
 
 # build the server
 WORKDIR /app/serve

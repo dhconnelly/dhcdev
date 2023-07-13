@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -73,7 +74,7 @@ func TestBuildTree(t *testing.T) {
 	src := t.TempDir()
 	html := "<html><body>Foo</body></html>"
 	check(t, os.WriteFile(path.Join(src, "a.html"), []byte(html), 0750))
-	md := "# hello"
+	md := "=== title ===\n# hello\n"
 	check(t, os.WriteFile(path.Join(src, "b.md"), []byte(md), 0750))
 	check(t, os.Mkdir(path.Join(src, "foo"), 0750))
 	check(t, os.WriteFile(path.Join(src, "foo/c.md"), []byte(md), 0750))
@@ -89,7 +90,7 @@ func TestBuildTree(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := []string{"a.html", "b.md", "foo/c.md"}
+	want := []string{"a.html", "b.html", "foo/c.html"}
 	for i := range want {
 		want[i] = path.Join(dst, want[i])
 	}
@@ -109,12 +110,15 @@ func TestBuildTree(t *testing.T) {
 }
 
 func TestBuildFileHTML(t *testing.T) {
+	// create an html file
 	dir := t.TempDir()
 	srcPath, dstPath := path.Join(dir, "src.html"), path.Join(dir, "dest.html")
 	html := "<html><body>foo</body></html>"
 	if err := os.WriteFile(srcPath, []byte(html), 0750); err != nil {
 		t.Fatal(err)
 	}
+
+	// create the source and destination files
 	src, err := os.Open(srcPath)
 	if err != nil {
 		t.Fatal(err)
@@ -123,16 +127,109 @@ func TestBuildFileHTML(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := BuildFile(dst, src); err != nil {
+
+	// build
+	if err := BuildFile(srcPath, dst, src); err != nil {
 		t.Fatal(err)
 	}
 	check(t, src.Close())
 	check(t, dst.Close())
+
+	// verify the contents were unmodified
 	got, err := os.ReadFile(dstPath)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if got := string(got); got != html {
 		t.Fatalf("want %s, got %s", html, got)
+	}
+}
+
+func TestBuildFileMarkdownMissingTitle(t *testing.T) {
+	// create a markdown file
+	dir := t.TempDir()
+	srcPath, dstPath := path.Join(dir, "src.md"), path.Join(dir, "dest.md")
+	md := "# bar\n"
+	if err := os.WriteFile(srcPath, []byte(md), 0750); err != nil {
+		t.Fatal(err)
+	}
+
+	// create the source and destination files
+	src, err := os.Open(srcPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := BuildFile(srcPath, dst, src); err == nil {
+		t.Fatal("expected missing title error")
+	}
+}
+
+func TestBuildFileMarkdown(t *testing.T) {
+	// create a markdown file
+	dir := t.TempDir()
+	srcPath, dstPath := path.Join(dir, "src.md"), path.Join(dir, "dest.md")
+	md := "=== foo ===\n# bar\n"
+	if err := os.WriteFile(srcPath, []byte(md), 0750); err != nil {
+		t.Fatal(err)
+	}
+
+	// create the source and destination files
+	src, err := os.Open(srcPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// build
+	if err := BuildFile(srcPath, dst, src); err != nil {
+		t.Fatal(err)
+	}
+	check(t, src.Close())
+	check(t, dst.Close())
+
+	// verify the contents were rendered
+	gotb, err := os.ReadFile(dstPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := string(gotb)
+	wantTitle := "<title>foo</title>"
+	if !strings.Contains(got, wantTitle) {
+		t.Fatalf("%s not found in %s", wantTitle, got)
+	}
+	wantH1 := "<h1>bar</h1>"
+	if !strings.Contains(got, wantH1) {
+		t.Fatalf("%s not found in %s", wantH1, got)
+	}
+}
+
+func TestBuildFileBadExtension(t *testing.T) {
+	dir := t.TempDir()
+	srcPath, dstPath := path.Join(dir, "src.xml"), path.Join(dir, "dest.xml")
+	xml := "<xml></xml>"
+	if err := os.WriteFile(srcPath, []byte(xml), 0750); err != nil {
+		t.Fatal(err)
+	}
+
+	// create the source and destination files
+	src, err := os.Open(srcPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := BuildFile(srcPath, dst, src); err == nil {
+		t.Fatal("expected missing title error")
 	}
 }
