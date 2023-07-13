@@ -1,7 +1,8 @@
 ---
 title: "Advent of Code 2019: Commentary"
-date: 2019-12-01
 ---
+
+_December 1, 2019_
 
 Here's my running commentary on [Advent of Code
 2019](https://adventofcode.com/2019), for which I'm using Go. The full code is
