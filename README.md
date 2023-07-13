@@ -4,17 +4,19 @@ source code and static files for my personal web site
 
 ## build and serve the site locally
 
-1.  build the server: `go build`
-2.  build the site complier: `cd build && go build && cd ..`
-3.  compile the site: `./build/build`
-4.  start serving: `./dhcdev` and open http://localhost:8080 in your browser
+1.  build everything: `go build ./...`
+2.  compile the site and start serving: `./build/build && ./serve/serve`
+3.  open/refresh http://localhost:8080 in your browser
 
-while iterating on the pages or posts, only steps 3 and 4 need to be repeated.
+while iterating on the pages or posts, only steps 2 and 3 need to be repeated.
 
-## build the image and run a container locally
+## start locally with docker
 
-    docker build --tag dhcdev .
-    docker run -d -p 8080:8080 dhcdev
+    docker-compose up -d
+
+## run integration tests
+
+    ./test.sh
 
 ## deploy to production
 
