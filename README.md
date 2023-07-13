@@ -4,19 +4,19 @@ Source code and static content for my personal web site.
 
 ## Usage
 
-All html and md files in the source directory (by default `pages`) will be
-compiled into the target directory (by default `target`). The logic for doing
-this is very simple:
+All files in the source directory (by default `pages`) will be compiled into
+the target directory (by default `target`). The logic for doing this is very
+simple:
 
-Markdown (.md) files should have the form:
+-   Markdown (.md) files should have the form:
 
-    === $TITLE ===
-    $MARKDOWN
+        === $TITLE ===
+        $MARKDOWN
 
-The `$MARKDOWN` content will be rendered from Markdown into HTML and the
-page `<title>` will be set from `$TITLE`.
+    The `$MARKDOWN` content will be rendered into HTML (with the extension
+    `.md` replaced by `.html`) and the page `<title>` set from `$TITLE`.
 
-HTML (.html) files are passed through unmodified.
+-   All other files are copied without modification.
 
 ### Build and serve the site locally
 
@@ -44,15 +44,18 @@ main branch.
 
 ## Implementation
 
-There are two packages:
+There are two parts:
 
--   `build`: a static site builder. It transforms a directory of HTML and
-    Markdown files into a directory of HTML files by rendering the Markdown
-    and passing through the HTML unmodified.
+-   `build`: a static site builder. It copies files from one directory to
+    another, rendering any Markdown (`.md`) files into HTML and copying all
+    other files without modification.
 
 -   `serve`: serves static files. There's some wrapper logic around the Go
     standard library's `http.FileServer` to log requests and response codes
     and to expose basic metrics using `expvar` at `/debug/status`.
+
+The `Dockerfile` builds both tools, calls `build` to build the files in `pages`,
+and calls `serve` to serve them.
 
 ## License
 

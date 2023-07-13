@@ -210,26 +210,3 @@ func TestBuildFileMarkdown(t *testing.T) {
 		t.Fatalf("%s not found in %s", wantH1, got)
 	}
 }
-
-func TestBuildFileBadExtension(t *testing.T) {
-	dir := t.TempDir()
-	srcPath, dstPath := path.Join(dir, "src.xml"), path.Join(dir, "dest.xml")
-	xml := "<xml></xml>"
-	if err := os.WriteFile(srcPath, []byte(xml), 0750); err != nil {
-		t.Fatal(err)
-	}
-
-	// create the source and destination files
-	src, err := os.Open(srcPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	dst, err := os.Create(dstPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if err := BuildFile(srcPath, dst, src); err == nil {
-		t.Fatal("expected missing title error")
-	}
-}

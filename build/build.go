@@ -17,14 +17,6 @@ import (
 
 var titlePat = regexp.MustCompile(`^=== ([^=]+) ===$`)
 
-func buildHTML(dst io.Writer, src io.Reader) error {
-	_, err := io.Copy(dst, src)
-	if err != nil {
-		return fmt.Errorf("error building html: %w", err)
-	}
-	return nil
-}
-
 func readTitle(r *bufio.Reader) (string, error) {
 	line, err := r.ReadString('\n')
 	if err != nil {
@@ -70,11 +62,9 @@ func buildMarkdown(dst io.Writer, src io.Reader) error {
 func BuildFile(path string, dst io.Writer, src io.Reader) error {
 	if strings.HasSuffix(path, "md") {
 		return buildMarkdown(dst, src)
-	} else if strings.HasSuffix(path, "html") {
-		return buildHTML(dst, src)
-	} else {
-		return fmt.Errorf("invalid file type: %s", path)
 	}
+	_, err := io.Copy(dst, src)
+	return err
 }
 
 func makeDstPath(srcDir, dstDir, filePath string) (string, error) {
@@ -82,8 +72,10 @@ func makeDstPath(srcDir, dstDir, filePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get relative dest path: %w", err)
 	}
-	relPath = strings.TrimSuffix(relPath, filepath.Ext(relPath))
-	relPath = relPath + ".html"
+	if strings.HasSuffix(relPath, "md") {
+		relPath = strings.TrimSuffix(relPath, filepath.Ext(relPath))
+		relPath = relPath + ".html"
+	}
 	dstPath := path.Join(dstDir, relPath)
 	if err := os.MkdirAll(path.Dir(dstPath), 0755); err != nil {
 		return "", fmt.Errorf("failed to make dest dirs: %w", err)
