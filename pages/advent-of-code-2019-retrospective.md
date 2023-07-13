@@ -1,9 +1,10 @@
 ---
 title: "Advent of Code 2019: Retrospective"
-date: 2019-12-27
 ---
 
-_Note: Per-problem commentary is [here](/advent-of-code-2019-commentary.html)_
+_December 27, 2019_
+
+**Note: Per-problem commentary is [here](/advent-of-code-2019-commentary.html)**
 
 This year I participated in [Advent of
 Code](https://adventofcode.com/2019) for the first time, and yesterday, on Christmas Day, I finished all fifty
