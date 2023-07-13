@@ -20,6 +20,7 @@ jobs:
 
     integration-test:
         runs-on: ubuntu-latest
+        needs: build-and-test
         steps:
             - uses: actions/checkout@v3
             - name: Run integration test
@@ -27,6 +28,7 @@ jobs:
 
     deploy:
         runs-on: ubuntu-latest
+        needs: integration-test
 
         # build and push to digital ocean
         # taken from https://github.com/digitalocean/sample-push-to-deploy-doks
