@@ -5,17 +5,29 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"text/template"
 )
 
 var (
-	srcDir = flag.String("srcDir", "pages", "source directory to build")
-	dstDir = flag.String("dstDir", "target", "build output directory")
+	srcDir   = flag.String("srcDir", "pages", "source directory to build")
+	dstDir   = flag.String("dstDir", "target", "build output directory")
+	postTmpl = flag.String("postTmpl", "pages/post-template.html", "path to the post template html")
 )
 
 func main() {
+	flag.Parse()
 	log.Println("source directory:", *srcDir)
 	log.Println("output directory:", *dstDir)
-	if err := BuildTree(*dstDir, *srcDir); err != nil {
+	log.Println("post template:", *postTmpl)
+	tmplPath, err := filepath.Abs(*postTmpl)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: can't load template %s: %s\n", *postTmpl, err)
+		os.Exit(1)
+	}
+	tmplName := filepath.Base(*postTmpl)
+	tmpl := template.Must(template.New(tmplName).ParseFiles(tmplPath))
+	if err := BuildTree(*dstDir, *srcDir, tmpl); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err)
 		os.Exit(1)
 	}

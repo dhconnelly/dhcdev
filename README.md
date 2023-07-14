@@ -8,15 +8,17 @@ All files in the source directory (by default `pages`) will be compiled into
 the target directory (by default `target`). The logic for doing this is very
 simple:
 
--   Markdown (.md) files should have the form:
+-   Markdown (.md) files will be rendered as HTML (.html) files into the
+    target directory. They should have the form:
 
         === $TITLE ===
-        $MARKDOWN
+        $CONTENT
 
-    The `$MARKDOWN` content will be rendered into HTML (with the extension
-    `.md` replaced by `.html`) and the page `<title>` set from `$TITLE`.
+    All Markdown files will be rendered using a single Go template (by default
+    `pages/post-template.html`). During rendering, $TITLE and $CONTENT data
+    will be accessible in the `{{.Title}}` and `{{.Content}}` variables.
 
--   All other files are copied without modification.
+-   All other files are copied to the target directory without modification.
 
 ### Build and serve the site locally
 
@@ -52,7 +54,7 @@ There are two parts:
 
 -   `serve`: serves static files. There's some wrapper logic around the Go
     standard library's `http.FileServer` to log requests and response codes
-    and to expose basic metrics using `expvar` at `/debug/status`.
+    and to expose basic metrics using `expvar` at `/debug/vars`.
 
 The `Dockerfile` builds both tools, calls `build` to build the files in `pages`,
 and calls `serve` to serve them.

@@ -7,7 +7,15 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"text/template"
 )
+
+var tmpl = template.Must(template.New("test").Parse(`
+<html>
+	<head><title>{{.Title}}</title></head>
+	<body>{{.Content}}</body>
+</html>
+`))
 
 func shallowSliceEq[T comparable](a, b []T) bool {
 	if len(a) != len(b) {
@@ -47,7 +55,7 @@ func check(t *testing.T, err error) {
 }
 
 func TestBuildTreeInvalid(t *testing.T) {
-	if err := BuildTree(t.TempDir(), "blah"); err == nil {
+	if err := BuildTree(t.TempDir(), "blah", tmpl); err == nil {
 		t.Fatal("expected error on nonexistent source directory")
 	}
 }
@@ -55,7 +63,7 @@ func TestBuildTreeInvalid(t *testing.T) {
 func TestBuildTreeEmpty(t *testing.T) {
 	dst := t.TempDir()
 	src := t.TempDir()
-	if err := BuildTree(dst, src); err != nil {
+	if err := BuildTree(dst, src, tmpl); err != nil {
 		t.Fatal(err)
 	}
 	filepath.WalkDir(dst, func(path string, d fs.DirEntry, err error) error {
@@ -81,7 +89,7 @@ func TestBuildTree(t *testing.T) {
 
 	// build the site
 	dst := t.TempDir()
-	if err := BuildTree(dst, src); err != nil {
+	if err := BuildTree(dst, src, tmpl); err != nil {
 		t.Fatal(err)
 	}
 
@@ -129,7 +137,7 @@ func TestBuildFileHTML(t *testing.T) {
 	}
 
 	// build
-	if err := BuildFile(srcPath, dst, src); err != nil {
+	if err := BuildFile(srcPath, dst, src, tmpl); err != nil {
 		t.Fatal(err)
 	}
 	check(t, src.Close())
@@ -164,7 +172,7 @@ func TestBuildFileMarkdownMissingTitle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := BuildFile(srcPath, dst, src); err == nil {
+	if err := BuildFile(srcPath, dst, src, tmpl); err == nil {
 		t.Fatal("expected missing title error")
 	}
 }
@@ -189,7 +197,7 @@ func TestBuildFileMarkdown(t *testing.T) {
 	}
 
 	// build
-	if err := BuildFile(srcPath, dst, src); err != nil {
+	if err := BuildFile(srcPath, dst, src, tmpl); err != nil {
 		t.Fatal(err)
 	}
 	check(t, src.Close())

@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"text/template"
 
 	"github.com/russross/blackfriday"
 )
@@ -29,39 +30,44 @@ func readTitle(r *bufio.Reader) (string, error) {
 	return ms[1], nil
 }
 
-func buildMarkdown(dst io.Writer, src io.Reader) error {
+type Page struct {
+	Title   string
+	Content string
+}
+
+func buildMarkdown(dst io.Writer, src io.Reader, tmpl *template.Template) error {
 	r := bufio.NewReader(src)
 	w := bufio.NewWriter(dst)
-	// TODO: build a proper page
 
 	// process the title
 	title, err := readTitle(r)
 	if err != nil {
 		return fmt.Errorf("error building markdown: %w", err)
 	}
-	if _, err = w.WriteString(fmt.Sprintf("<head><title>%s</title></head>", title)); err != nil {
-		return fmt.Errorf("error writing title: %w", err)
-	}
 
 	// process the content
 	input, err := io.ReadAll(r)
 	if err != nil {
-		return fmt.Errorf("error reading source: %w", err)
+		return fmt.Errorf("error reading markdown source: %w", err)
 	}
 	output := blackfriday.MarkdownCommon(input)
-	if _, err = w.Write(output); err != nil {
-		return fmt.Errorf("error writing content: %w", err)
+
+	// process the post template
+	if err := tmpl.Execute(w, Page{title, string(output)}); err != nil {
+		return fmt.Errorf("error rendering post template: %w", err)
 	}
 
 	if err := w.Flush(); err != nil {
-		return fmt.Errorf("error writing title: %w", err)
+		return fmt.Errorf("error writing to destination: %w", err)
 	}
 	return nil
 }
 
-func BuildFile(path string, dst io.Writer, src io.Reader) error {
+func BuildFile(
+	path string, dst io.Writer, src io.Reader, tmpl *template.Template,
+) error {
 	if strings.HasSuffix(path, "md") {
-		return buildMarkdown(dst, src)
+		return buildMarkdown(dst, src, tmpl)
 	}
 	_, err := io.Copy(dst, src)
 	return err
@@ -83,7 +89,7 @@ func makeDstPath(srcDir, dstDir, filePath string) (string, error) {
 	return dstPath, nil
 }
 
-func walk(dstDir, srcDir string) fs.WalkDirFunc {
+func walk(dstDir, srcDir string, tmpl *template.Template) fs.WalkDirFunc {
 	return func(filePath string, d fs.DirEntry, err error) error {
 		if err != nil {
 			// io error unrelated to building
@@ -110,7 +116,7 @@ func walk(dstDir, srcDir string) fs.WalkDirFunc {
 		}
 		defer dst.Close()
 
-		if err := BuildFile(filePath, dst, src); err != nil {
+		if err := BuildFile(filePath, dst, src, tmpl); err != nil {
 			return fmt.Errorf("error building file %s: %s", filePath, err)
 		}
 
@@ -118,6 +124,6 @@ func walk(dstDir, srcDir string) fs.WalkDirFunc {
 	}
 }
 
-func BuildTree(dst, src string) error {
-	return filepath.WalkDir(src, walk(dst, src))
+func BuildTree(dst, src string, tmpl *template.Template) error {
+	return filepath.WalkDir(src, walk(dst, src, tmpl))
 }
