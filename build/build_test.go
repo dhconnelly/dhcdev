@@ -213,7 +213,7 @@ func TestBuildFileMarkdown(t *testing.T) {
 	if !strings.Contains(got, wantTitle) {
 		t.Fatalf("%s not found in %s", wantTitle, got)
 	}
-	wantH1 := "<h1>bar</h1>"
+	wantH1 := `<h1 id="bar">bar</h1>`
 	if !strings.Contains(got, wantH1) {
 		t.Fatalf("%s not found in %s", wantH1, got)
 	}
