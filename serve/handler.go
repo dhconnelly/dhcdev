@@ -31,8 +31,11 @@ type observedHandler struct {
 	counters counters
 }
 
+const cachePolicy = "public, max-age=3600"
+
 func (s *observedHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	s.counters.reqs.Add(1)
+	res.Header().Add("Cache-Control", cachePolicy)
 	o := observedResponseWriter{res, req, &s.counters}
 	s.h.ServeHTTP(&o, req)
 }
