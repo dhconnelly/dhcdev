@@ -13,7 +13,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/russross/blackfriday"
+	"github.com/russross/blackfriday/v2"
 )
 
 var titlePat = regexp.MustCompile(`^=== ([^=]+) ===$`)
@@ -35,6 +35,8 @@ type Page struct {
 	Content string
 }
 
+const extensions = blackfriday.CommonExtensions | blackfriday.AutoHeadingIDs
+
 func buildMarkdown(dst io.Writer, src io.Reader, tmpl *template.Template) error {
 	r := bufio.NewReader(src)
 	w := bufio.NewWriter(dst)
@@ -50,7 +52,7 @@ func buildMarkdown(dst io.Writer, src io.Reader, tmpl *template.Template) error 
 	if err != nil {
 		return fmt.Errorf("error reading markdown source: %w", err)
 	}
-	output := blackfriday.MarkdownCommon(input)
+	output := blackfriday.Run(input, blackfriday.WithExtensions(extensions))
 
 	// process the post template
 	if err := tmpl.Execute(w, Page{title, string(output)}); err != nil {
