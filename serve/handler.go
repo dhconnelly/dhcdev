@@ -37,7 +37,7 @@ func (s *observedHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) 
 	s.h.ServeHTTP(&o, req)
 }
 
-func newHandler(serveDir string, counters counters) http.Handler {
+func newHandler(serveDir string, counters counters) *observedHandler {
 	fs := http.FileServer(http.Dir(serveDir))
 	return &observedHandler{h: fs, counters: counters}
 }

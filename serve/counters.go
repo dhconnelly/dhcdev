@@ -7,6 +7,7 @@ type counters struct {
 	resps       *expvar.Int
 	pages       *expvar.Map
 	statusCodes *expvar.Map
+	cacheHits   *expvar.Int
 }
 
 func newCounters() counters {
@@ -15,5 +16,6 @@ func newCounters() counters {
 		resps:       expvar.NewInt("responses"),
 		pages:       expvar.NewMap("pages"),
 		statusCodes: expvar.NewMap("statusCodes"),
+		cacheHits:   expvar.NewInt("cacheHits"),
 	}
 }
