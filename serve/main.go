@@ -18,7 +18,7 @@ func main() {
 	// TODO: set up in-memory cache
 
 	log.Println("serving static files from:", *serveDir)
-	log.Println("serving on port:", *port)
+	log.Printf("serving at http://localhost:%d\n", *port)
 	http.Handle("/", newHandler(*serveDir, newCounters()))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", *port), nil); err != nil {
 		log.Println("fatal:", err)

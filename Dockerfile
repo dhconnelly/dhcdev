@@ -22,7 +22,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build
 # compile the site
 WORKDIR /app
 COPY pages/ ./pages/
-RUN ./build/build -srcDir=pages -dstDir=target
+COPY templates/ ./templates/
+RUN ./build/build -srcDir=pages -dstDir=target -postTmpl=templates/post-template.html
 
 # build lean image
 FROM gcr.io/distroless/base-debian11 AS build-release-stage

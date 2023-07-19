@@ -15,7 +15,7 @@ simple:
         $CONTENT
 
     All Markdown files will be rendered using a single Go template (by default
-    `pages/post-template.html`). During rendering, $TITLE and $CONTENT data
+    `templates/post-template.html`). During rendering, $TITLE and $CONTENT data
     will be accessible in the `{{.Title}}` and `{{.Content}}` variables.
 
 -   All other files are copied to the target directory without modification.

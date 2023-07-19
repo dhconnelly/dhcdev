@@ -12,7 +12,7 @@ import (
 var (
 	srcDir   = flag.String("srcDir", "pages", "source directory to build")
 	dstDir   = flag.String("dstDir", "target", "build output directory")
-	postTmpl = flag.String("postTmpl", "pages/post-template.html", "path to the post template html")
+	postTmpl = flag.String("postTmpl", "templates/post-template.html", "path to the post template html")
 	// TODO: inline the css
 )
 
