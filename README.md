@@ -22,7 +22,7 @@ simple:
 
 ### Build and serve the site locally
 
-1.  Build the tools: `go build ./...`
+1.  Build the tools: `cd build && go build && cd ../serve && go build && cd ..`
 2.  Compile the site and start serving: `./build/build && ./serve/serve`
 3.  Open/refresh http://localhost:8080 in your browser
 
@@ -32,7 +32,7 @@ Pass `-h` to either the `build` or `serve` commands to see a few options.
 
 ### Build and run locally with Docker
 
-    docker-compose up -d
+    docker-compose up -d --build
 
 ### Run integration tests
 

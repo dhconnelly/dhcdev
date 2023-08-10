@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+    "log"
 	"os"
 	"path"
 	"path/filepath"
@@ -68,6 +69,7 @@ func buildMarkdown(dst io.Writer, src io.Reader, tmpl *template.Template) error 
 func BuildFile(
 	path string, dst io.Writer, src io.Reader, tmpl *template.Template,
 ) error {
+    log.Printf("building file: %s", path)
 	if strings.HasSuffix(path, "md") {
 		return buildMarkdown(dst, src, tmpl)
 	}
