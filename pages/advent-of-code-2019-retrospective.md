@@ -1,5 +1,7 @@
 === Advent of Code 2019: Retrospective ===
 
+[[home]](/)
+
 # Advent of Code 2019: Retrospective
 
 _December 27, 2019_
@@ -205,3 +207,5 @@ the most fun I've ever had programming, and I'm so happy to have
 practiced all this material and refreshed my skills, and proud to
 have finished it all by the last day! Looking forward to
 participating next year!
+
+[[home]](/)

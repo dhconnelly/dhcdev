@@ -1,5 +1,7 @@
 === Advent of Code 2019: Commentary ===
 
+[[home]](/)
+
 # Advent of Code 2019: Commentary
 
 _December 1, 2019_
@@ -3915,3 +3917,5 @@ All the code for all the days is on my
 Merry Christmas and Happy New Year!
 
 **Edit**: Retrospective is [here](/advent-of-code-2019-retrospective.html)
+
+[[home]](/)

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-    "log"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -53,7 +53,9 @@ func buildMarkdown(dst io.Writer, src io.Reader, tmpl *template.Template) error 
 	if err != nil {
 		return fmt.Errorf("error reading markdown source: %w", err)
 	}
-	output := blackfriday.Run(input, blackfriday.WithExtensions(extensions))
+	output := blackfriday.Run(input,
+		blackfriday.WithNoExtensions(),
+		blackfriday.WithExtensions(extensions))
 
 	// process the post template
 	if err := tmpl.Execute(w, Page{title, string(output)}); err != nil {
@@ -69,7 +71,7 @@ func buildMarkdown(dst io.Writer, src io.Reader, tmpl *template.Template) error 
 func BuildFile(
 	path string, dst io.Writer, src io.Reader, tmpl *template.Template,
 ) error {
-    log.Printf("building file: %s", path)
+	log.Printf("building file: %s", path)
 	if strings.HasSuffix(path, "md") {
 		return buildMarkdown(dst, src, tmpl)
 	}
