@@ -53,8 +53,9 @@ There are two parts:
     other files without modification.
 
 -   `serve`: serves static files. There's some wrapper logic around the Go
-    standard library's `http.FileServer` to log requests and response codes
-    and to expose basic metrics using `expvar` at `/debug/vars`.
+    standard library's `http.FileServer` to log requests and response codes,
+    expose basic metrics using `expvar` at `/debug/vars`,
+    and add a `Cache-Control` header for Cloudflare CDN.
 
 The `Dockerfile` builds both tools, calls `build` to build the files in `pages`,
 and calls `serve` to serve them.
