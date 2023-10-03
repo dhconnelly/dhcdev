@@ -95,8 +95,11 @@ existing TensorFlow code.
 
 **Book**: [https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/](https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/)
 
-**Status**: Just started. Going to experiment with [JAX](https://jax.readthedocs.io/en/latest/notebooks/quickstart.html) and [Flax](https://flax.readthedocs.io/en/latest/) too for some sections and exercises.
+**Status**: In progress
 
 **Notes and Colabs**:
 
-TODO
+-   [Annotated Machine Learning Project Checklist](/ml-project-checklist.html) taken from Appendix A plus details and tips from other chapters
+-   Chapter 2: End-to-End ML Project - [Colab](https://colab.research.google.com/drive/18JrgQZ3DRNn3qXmExQKAR9kuHNKOAdnn?usp=sharing)
+-   Chapter 3: Classification - [Colab](https://colab.research.google.com/drive/1mhl0SME75Fsa9fd11hDHCYJ-8D0A9OjK)
+-   Chapter 4: Training Models - [Colab](https://colab.research.google.com/drive/1YBZ9bZXJqzpxEEu9rNnRLZVaY3WeOdqC)
