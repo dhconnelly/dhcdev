@@ -5,6 +5,8 @@
 
 # Notes: Learning Machine Learning
 
+_February 1, 2023_
+
 I've decided to spend some time digging into Machine Learning and Deep Learning.
 I took an ML course in grad school but forgot most of it, and I worked on a
 system for Google Maps that predicated hundreds of categorical labels for tens
