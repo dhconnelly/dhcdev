@@ -86,10 +86,10 @@ existing TensorFlow code.
 
 ## Kaggle submissions
 
--   MNIST without using neural networks: [accuracy 0.97082](https://www.kaggle.com/dhconnelly/mnist-without-neural-nets)
--   Titanic: [accuracy 0.77751](https://www.kaggle.com/code/dhconnelly/titanic)
--   Spaceship Titanic: [accuracy 0.79752](https://www.kaggle.com/code/dhconnelly/spaceship-titanic/notebook)
--   House Prices: [error 0.15108](https://www.kaggle.com/code/dhconnelly/house-prices)
+-   [MNIST without using neural networks](https://www.kaggle.com/dhconnelly/mnist-without-neural-nets)
+-   [Titanic](https://www.kaggle.com/code/dhconnelly/titanic)
+-   [Spaceship Titanic](https://www.kaggle.com/code/dhconnelly/spaceship-titanic/notebook)
+-   [House Prices](https://www.kaggle.com/code/dhconnelly/house-prices)
 
 ## Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow
 
