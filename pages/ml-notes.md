@@ -9,9 +9,9 @@ _February 1, 2023_
 
 I've decided to spend some time digging into Machine Learning and Deep Learning.
 I took an ML course in grad school but forgot most of it, and I worked on a
-system for Google Maps that predicated hundreds of categorical labels for tens
-of millions of POIs, but without really understanding the details and math
-behind the model.
+system for Google Maps back in 2015-2016 that predicated hundreds of categorical
+labels for tens of millions of POIs, but I wasn't responsible for the model and
+it was the days before TensorFlow. A lot has happened!
 
 I'll link notes and notebooks below as I go along.
 
