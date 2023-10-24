@@ -12,6 +12,5 @@ Principal Engineer at Teads in Paris. Find me on [GitHub](https://github.com/dhc
 - The [Go code](https://github.com/dhconnelly/dhcdev) for this site, including a simple static site compiler and web server
 
 ## Blog
-- [Learning Machine Learning](/ml-notes.html)
 - [Advent of Code 2019: day-by-day commentary](/advent-of-code-2019-commentary.html)
 - [Advent of Code 2019: retrospective](/advent-of-code-2019-retrospective.html)
