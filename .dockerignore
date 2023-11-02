@@ -1,0 +1,9 @@
+# flyctl launch added from .gitignore
+**/target
+
+# flyctl launch added from build/.gitignore
+build/**/build
+
+# flyctl launch added from serve/.gitignore
+serve/**/serve
+fly.toml
