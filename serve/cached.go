@@ -44,6 +44,7 @@ func (w cachedResponseWriter) Write(b []byte) (int, error) {
 
 func (h *cachedHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if data := h.cache.Get(req.URL.Path); data != nil {
+		// TODO: this should still update the observed counters
 		cacheHits.Add(1)
 		h.serveCached(resp, req, data)
 		return
