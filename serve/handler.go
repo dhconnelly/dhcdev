@@ -17,7 +17,6 @@ func newGetHandler(h http.Handler) http.Handler {
 func NewHandler(root http.FileSystem) http.Handler {
 	var h http.Handler
 	h = http.FileServer(root)
-	h = newCachedHandler(h)
 	h = newGetHandler(h)
 	h = newObservedHandler(h)
 	return h

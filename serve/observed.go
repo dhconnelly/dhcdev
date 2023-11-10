@@ -29,7 +29,7 @@ func (o observedResponseWriter) WriteHeader(statusCode int) {
 	statusCodes.Add(strconv.Itoa(statusCode), 1)
 
 	// only record pages where load succeeds so caller can't oom us
-	if statusCode == 200 {
+	if statusCode < 400 {
 		pages.Add(o.req.URL.String(), 1)
 	}
 }
