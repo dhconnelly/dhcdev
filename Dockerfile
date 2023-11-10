@@ -4,34 +4,23 @@
 
 FROM golang:1.20 AS build-stage
 
-# set up the module
+# copy over files and build the tool
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
-
-# build the server
-WORKDIR /app/serve
-COPY serve/*.go ./
+COPY . ./
 RUN CGO_ENABLED=0 GOOS=linux go build
 
-# build the site compiler
-WORKDIR /app/build
-COPY build/*.go ./
-RUN CGO_ENABLED=0 GOOS=linux go build
-
-# compile the site
-WORKDIR /app
-COPY pages/ ./pages/
-COPY templates/ ./templates/
-RUN ./build/build -srcDir=pages -dstDir=target -postTmpl=templates/post-template.html
+# build the site
+RUN ./dhcdev -serve=false -srcDir=pages -dstDir=target -postTmpl=templates/post-template.html
 
 # build lean image
 FROM gcr.io/distroless/base-debian11 AS build-release-stage
 WORKDIR /app
-COPY --from=build-stage /app/serve/serve ./
+COPY --from=build-stage /app/dhcdev ./
 COPY --from=build-stage /app/target/ ./target/
 
-# start
+# start the server
 EXPOSE 8080
 USER nonroot:nonroot
-CMD ["./serve", "-port=8080", "-serveDir=target"]
+CMD ["./dhcdev", "-build=false", "-port=8080", "-serveDir=target"]

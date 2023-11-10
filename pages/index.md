@@ -2,7 +2,7 @@
 
 # Daniel Connelly
 
-Principal Engineer at Teads in Paris. Find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
+Principal Engineer at Teads in Paris. Previously at Google, Butterfly Network, and MIT Lincoln Laboratory. Find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
 
 ## Projects
 - An R-Tree library in Go: [rtreego](https://github.com/dhconnelly/rtreego)

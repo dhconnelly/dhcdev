@@ -22,17 +22,13 @@ simple:
 
 ### Build and serve the site locally
 
-1.  Build the tools: `cd build && go build && cd ../serve && go build && cd ..`
-2.  Compile the site and start serving: `./build/build && ./serve/serve`
+1.  Build the tool: `go build`
+2.  Compile the site and start serving: `./dhcdev`
 3.  Open/refresh http://localhost:8080 in your browser
 
-While iterating on the pages or posts, only steps 2 and 3 need to be repeated.
+To automatically rebuild and serve the site while writing:
 
-Pass `-h` to either the `build` or `serve` commands to see a few options.
-
-### Build and run locally with Docker
-
-    docker-compose up -d --build
+    gow -e=go,md run .
 
 ### Run integration tests
 
@@ -40,25 +36,25 @@ Pass `-h` to either the `build` or `serve` commands to see a few options.
 
 ### Deploy to production
 
-The docker image (including the static site and the server) is automatically
-built and deployed to Digital Ocean via Github Actions on each commit to the
-main branch.
+The site is served on GCP Cloud Run. It will automatically pick up new pushes
+to the main branch and deploy them after merge.
 
 ## Implementation
 
 There are two parts:
 
--   `build`: a static site builder. It copies files from one directory to
-    another, rendering any Markdown (`.md`) files into HTML and copying all
-    other files without modification.
+-   `package build`: implements a simple static site builder. It copies files
+    from one directory to another, rendering any Markdown (`.md`) files into
+    HTML and copying all other files without modification.
 
--   `serve`: serves static files. There's some wrapper logic around the Go
-    standard library's `http.FileServer` to log requests and response codes,
-    expose basic metrics using `expvar` at `/debug/vars`,
-    and add a `Cache-Control` header for Cloudflare CDN.
+-   `package serve`: implements an http handler for static files. There's some
+    wrapper logic around the Go standard library's `http.FileServer` to log
+    requests and response codes, expose basic metrics using `expvar` at
+    `/debug/vars`, and add a `Cache-Control` header for Cloudflare CDN.
 
-The `Dockerfile` builds both tools, calls `build` to build the files in `pages`,
-and calls `serve` to serve them.
+`package main` wraps up both of these packages. The `Dockerfile` uses this to
+build and serve the site, but separates the build and serving stages in order
+to deploy the static assets in the Docker image.
 
 ## License
 

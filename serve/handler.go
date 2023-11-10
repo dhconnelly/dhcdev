@@ -1,4 +1,4 @@
-package main
+package serve
 
 import (
 	"log"
@@ -40,7 +40,8 @@ func (s *observedHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) 
 	s.h.ServeHTTP(&o, req)
 }
 
-func newHandler(serveDir string, counters counters) http.Handler {
+func NewHandler(serveDir string) http.Handler {
 	fs := http.FileServer(http.Dir(serveDir))
+	counters := newCounters()
 	return &observedHandler{h: fs, counters: counters}
 }
