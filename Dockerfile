@@ -2,7 +2,7 @@
 
 # thanks to https://docs.docker.com/language/golang/build-images
 
-FROM golang:1.20 AS build-stage
+FROM golang:1.21 AS build-stage
 
 # copy over files and build the tool
 WORKDIR /app
