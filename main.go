@@ -51,7 +51,7 @@ func main() {
 		http.HandleFunc("/healthz", func(resp http.ResponseWriter, req *http.Request) {
 			resp.WriteHeader(200)
 		})
-		http.Handle("/", serve.NewHandler(*serveDir))
+		http.Handle("/", serve.NewHandler(http.Dir(*serveDir)))
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", *port), nil); err != nil {
 			log.Println("fatal:", err)
 		}

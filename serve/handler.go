@@ -1,15 +1,22 @@
 package serve
 
 import (
+	"expvar"
 	"log"
 	"net/http"
 	"strconv"
 )
 
+var (
+	reqs        = expvar.NewInt("requests")
+	resps       = expvar.NewInt("responses")
+	pages       = expvar.NewMap("pages")
+	statusCodes = expvar.NewMap("statusCodes")
+)
+
 type observedResponseWriter struct {
 	http.ResponseWriter
-	req      *http.Request
-	counters *counters
+	req *http.Request
 }
 
 func (o observedResponseWriter) WriteHeader(statusCode int) {
@@ -18,30 +25,33 @@ func (o observedResponseWriter) WriteHeader(statusCode int) {
 		o.req.RemoteAddr, o.req.UserAgent(), o.req.Method, o.req.Host,
 		o.req.URL.String(), statusCode)
 	o.ResponseWriter.WriteHeader(statusCode)
-	o.counters.resps.Add(1)
-	o.counters.statusCodes.Add(strconv.Itoa(statusCode), 1)
+	resps.Add(1)
+	statusCodes.Add(strconv.Itoa(statusCode), 1)
+
 	// only record pages where load succeeds so caller can't oom us
-	if statusCode < 400 {
-		o.counters.pages.Add(o.req.URL.String(), 1)
+	if statusCode == 200 {
+		pages.Add(o.req.URL.String(), 1)
 	}
 }
 
 type observedHandler struct {
-	h        http.Handler
-	counters counters
+	h http.Handler
 }
 
 const cachePolicy = "public, max-age=3600"
 
 func (s *observedHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	s.counters.reqs.Add(1)
+	reqs.Add(1)
 	res.Header().Add("Cache-Control", cachePolicy)
-	o := observedResponseWriter{res, req, &s.counters}
-	s.h.ServeHTTP(&o, req)
+	o := observedResponseWriter{res, req}
+	if req.Method == "GET" {
+		s.h.ServeHTTP(&o, req)
+	} else {
+		o.WriteHeader(http.StatusMethodNotAllowed)
+	}
 }
 
-func NewHandler(serveDir string) http.Handler {
-	fs := http.FileServer(http.Dir(serveDir))
-	counters := newCounters()
-	return &observedHandler{h: fs, counters: counters}
+func NewHandler(root http.FileSystem) http.Handler {
+	fs := http.FileServer(root)
+	return &observedHandler{h: fs}
 }
