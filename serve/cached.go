@@ -11,30 +11,32 @@ import (
 )
 
 var (
-	cacheSize = flag.Int("cacheSize", 10*1000*1000 /* 10 MB */, "cache size in bytes")
-
-	// misses aren't interesting: all 404s are cache misses.
-	// instead compare cacheHits with vars from the observedHandler.
-	cacheHits = expvar.NewInt("cacheHits")
+	cacheSize   = flag.Int("cacheSize", 10*1000*1000 /* 10 MB */, "cache size in bytes")
+	cacheHits   = expvar.NewMap("cacheHits")
+	cacheMisses = expvar.NewMap("cacheMisses")
 )
 
 type cachedHandler struct {
-	cache cache.Cache
+	cache *cache.Cache
 	h     http.Handler
 }
 
 func (h *cachedHandler) serveCached(
-	resp http.ResponseWriter, req *http.Request, b []byte,
+	resp http.ResponseWriter, req *http.Request, data cache.CachedData,
 ) {
-	_, err := resp.Write(b)
+	resp.Header().Add("Content-Type", data.ContentType)
+	resp.WriteHeader(http.StatusOK)
+	_, err := resp.Write(data.Data)
 	if err != nil {
 		log.Printf("failed to write cached response for %s: %s", req.URL.Path, err)
 	}
 }
 
 type cachedResponseWriter struct {
+	req *http.Request
 	http.ResponseWriter
-	buf *bytes.Buffer
+	header http.Header
+	buf    *bytes.Buffer
 }
 
 func (w cachedResponseWriter) Write(b []byte) (int, error) {
@@ -42,17 +44,28 @@ func (w cachedResponseWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
+func (w cachedResponseWriter) WriteHeader(status int) {
+	w.header = w.Header().Clone()
+	w.ResponseWriter.WriteHeader(status)
+	if status < 400 {
+		cacheMisses.Add(w.req.URL.Path, 1)
+	}
+}
+
 func (h *cachedHandler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	if data := h.cache.Get(req.URL.Path); data != nil {
-		// TODO: this should still update the observed counters
-		cacheHits.Add(1)
+	if data, ok := h.cache.Get(req.URL.Path); ok {
+		cacheHits.Add(req.URL.Path, 1)
 		h.serveCached(resp, req, data)
 		return
 	}
 
-	w := cachedResponseWriter{ResponseWriter: resp, buf: &bytes.Buffer{}}
+	w := cachedResponseWriter{req: req, ResponseWriter: resp, buf: &bytes.Buffer{}}
 	h.h.ServeHTTP(w, req)
-	h.cache.Put(req.URL.Path, w.buf.Bytes())
+	data := cache.CachedData{
+		Data:        w.buf.Bytes(),
+		ContentType: w.Header().Get("Content-Type"),
+	}
+	h.cache.Put(req.URL.Path, data)
 }
 
 func newCachedHandler(h http.Handler) http.Handler {

@@ -43,14 +43,13 @@ func main() {
 		}
 	}
 
-	// TODO: set up in-memory cache
-
 	if *serveSite {
 		log.Println("serving static files from:", *serveDir)
 		log.Printf("serving at http://localhost:%d\n", *port)
 		http.HandleFunc("/healthz", func(resp http.ResponseWriter, req *http.Request) {
 			resp.WriteHeader(200)
 		})
+		// TODO: expose in-memory cache at /cachez
 		http.Handle("/", serve.NewHandler(http.Dir(*serveDir)))
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", *port), nil); err != nil {
 			log.Println("fatal:", err)

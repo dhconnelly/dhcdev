@@ -47,8 +47,17 @@ func (h *frequencyHeap) incr(path string) {
 	}
 }
 
+type CachedData struct {
+	ContentType string
+	Data        []byte
+}
+
+func (data CachedData) Len() int {
+	return len(data.Data)
+}
+
 type Cache struct {
-	data    map[string][]byte
+	data    map[string]CachedData
 	lfu     *frequencyHeap
 	size    int
 	maxSize int
@@ -62,22 +71,22 @@ func (c *Cache) Len() int {
 	return len(c.data)
 }
 
-func New(size int) Cache {
-	return Cache{
-		data:    make(map[string][]byte),
+func New(size int) *Cache {
+	return &Cache{
+		data:    make(map[string]CachedData),
 		lfu:     &frequencyHeap{},
 		size:    0,
 		maxSize: size,
 	}
 }
 
-func (c *Cache) Get(path string) []byte {
+func (c *Cache) Get(path string) (CachedData, bool) {
 	data, ok := c.data[path]
 	if !ok {
-		return nil
+		return CachedData{}, false
 	}
 	c.lfu.incr(path)
-	return data
+	return data, true
 }
 
 func (c *Cache) pop() {
@@ -86,18 +95,18 @@ func (c *Cache) pop() {
 	c.size -= last.size
 }
 
-func (c *Cache) push(path string, data []byte) {
-	last := elem{path: path, size: len(data), count: 0}
+func (c *Cache) push(path string, data CachedData) {
+	last := elem{path: path, size: data.Len(), count: 0}
 	heap.Push(c.lfu, last)
 	c.data[path] = data
 	c.size += last.size
 }
 
-func (c *Cache) Put(path string, data []byte) {
-	if len(data) > c.maxSize {
+func (c *Cache) Put(path string, data CachedData) {
+	if len(data.Data) > c.maxSize {
 		return
 	}
-	for c.size+len(data) > c.maxSize {
+	for c.size+len(data.Data) > c.maxSize {
 		c.pop()
 	}
 	c.push(path, data)
