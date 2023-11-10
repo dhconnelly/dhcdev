@@ -41,7 +41,7 @@ to the main branch and deploy them after merge.
 
 ## Implementation
 
-There are two parts:
+There are three parts:
 
 -   `package build`: implements a simple static site builder. It copies files
     from one directory to another, rendering any Markdown (`.md`) files into
@@ -52,9 +52,9 @@ There are two parts:
     requests and response codes, expose basic metrics using `expvar` at
     `/debug/vars`, and add a `Cache-Control` header for Cloudflare CDN.
 
-`package main` wraps up both of these packages. The `Dockerfile` uses this to
-build and serve the site, but separates the build and serving stages in order
-to deploy the static assets in the Docker image.
+-   `package main` wraps up `build` and `serve`. The `Dockerfile` uses this
+    to build and serve the site, but separates the build and serving stages in
+    order to deploy the static assets in the Docker image.
 
 ## License
 
