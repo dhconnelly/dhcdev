@@ -1,26 +1,21 @@
 # syntax=docker/dockerfile:1
 
-# thanks to https://docs.docker.com/language/golang/build-images
-
-FROM golang:1.21 AS build-stage
-
-# copy over files and build the tool
+# build the image
+FROM golang:1.21-bullseye AS build-stage
 WORKDIR /app
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . ./
-RUN CGO_ENABLED=0 GOOS=linux go build
+RUN GOBIN=/app go install github.com/dhconnelly/sss@latest
 
 # build the site
-RUN ./dhcdev -serve=false -srcDir=pages -dstDir=target -postTmpl=templates/post-template.html
+COPY . .
+RUN ./sss -serve=false -srcDir=pages -dstDir=target -postTmpl=templates/post-template.html
 
-# build lean image
+# package the server and files
 FROM gcr.io/distroless/base-debian11 AS build-release-stage
 WORKDIR /app
-COPY --from=build-stage /app/dhcdev ./
 COPY --from=build-stage /app/target/ ./target/
+COPY --from=build-stage /app/sss ./sss
 
-# start the server
+# serve
 EXPOSE 8080
 USER nonroot:nonroot
-CMD ["./dhcdev", "-build=false", "-port=8080", "-serveDir=target"]
+CMD ["./sss", "-build=false", "-port=8080", "-serveDir=target"]
