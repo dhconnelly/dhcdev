@@ -3,7 +3,7 @@
 # build the image
 FROM golang:1.21-bullseye AS build-stage
 WORKDIR /app
-RUN GOBIN=/app go install github.com/dhconnelly/sss@latest
+RUN GOBIN=/app go install github.com/dhconnelly/sss@v1.0.0
 
 # build the site
 COPY . .
