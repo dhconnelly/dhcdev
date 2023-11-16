@@ -3,7 +3,7 @@
 test() {
     docker-compose down && \
     docker-compose up -d --build && \
-    sleep 5 && curl localhost:8080 && \
+    sleep 1 && curl localhost:8080 && \
     docker-compose down
 }
 
