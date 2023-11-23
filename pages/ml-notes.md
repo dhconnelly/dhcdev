@@ -10,17 +10,18 @@ _February 1, 2023_
 I've decided to spend some time digging into Machine Learning and Deep Learning.
 I took an ML course in grad school but forgot most of it, and I worked on a
 system for Google Maps back in 2015-2016 that predicated hundreds of categorical
-labels for tens of millions of POIs, but I wasn't responsible for the model and
-it was the days before TensorFlow. A lot has happened!
+labels for tens of millions of POIs, but I only understood the model at a
+superficial level, and it was the days before TensorFlow, so we had to build a
+lot of custom stuff. A lot has happened since then!
 
-I'll link notes and notebooks below as I go along.
+I'll link notes and code below as I go along.
 
 ## Table of Contents
 
 -   [Google's Machine Learning Crash Course](#google-s-machine-learning-crash-course)
--   [Coursera Machine Learning Specialization](#coursera-machine-learning-specialization)
+-   [Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow](#hands-on-machine-learning-with-scikit-learn-keras-and-tensorflow) (abandoned)
 -   [Interlude: Some Kaggle submissions](#kaggle-submissions)
--   [Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow](#hands-on-machine-learning-with-scikit-learn-keras-and-tensorflow)
+-   [Coursera Machine Learning Specialization](#coursera-machine-learning-specialization)
 
 ## Google's Machine Learning Crash Course
 
@@ -34,7 +35,8 @@ This ~15 hour video-heavy course provides a broad overview of the field. The
 emphasis is on linear and logistic regression, neural networks, and
 applied/engineering factors. There are also some "programming exercises" that
 provide ~zero learning value, as you do little more than just read and execute
-existing TensorFlow code.
+existing TensorFlow code. But still this is a very good and information-dense
+course that I would highly recommend as an introduction.
 
 **Notes**:
 
@@ -60,11 +62,31 @@ existing TensorFlow code.
 20. [Real-World Examples](/mlcc/mlcc-20-examples.pdf)
 21. [Guidelines](/mlcc/mlcc-21-guidelines.pdf)
 
+## Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow
+
+**Book**: [https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/](https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/)
+
+**Status**: Abandoned. Fantastic book but more in-depth than I'm looking for right now.
+
+**Notes and Colabs**:
+
+-   [Annotated Machine Learning Project Checklist](/ml-project-checklist.html) taken from Appendix A plus details and tips from other chapters
+-   Chapter 2: End-to-End ML Project - [Colab](https://colab.research.google.com/drive/18JrgQZ3DRNn3qXmExQKAR9kuHNKOAdnn?usp=sharing)
+-   Chapter 3: Classification - [Colab](https://colab.research.google.com/drive/1mhl0SME75Fsa9fd11hDHCYJ-8D0A9OjK)
+-   Chapter 4: Training Models - [Colab](https://colab.research.google.com/drive/1YBZ9bZXJqzpxEEu9rNnRLZVaY3WeOdqC)
+
+## Kaggle submissions
+
+-   [MNIST without using neural networks](https://www.kaggle.com/dhconnelly/mnist-without-neural-nets)
+-   [Titanic](https://www.kaggle.com/code/dhconnelly/titanic)
+-   [Spaceship Titanic](https://www.kaggle.com/code/dhconnelly/spaceship-titanic/notebook)
+-   [House Prices](https://www.kaggle.com/code/dhconnelly/house-prices)
+
 ## Coursera Machine Learning Specialization
 
 **Course**: [https://www.deeplearning.ai/courses/machine-learning-specialization/](https://www.deeplearning.ai/courses/machine-learning-specialization/)
 
-**Status**: Finished courses 1 and 2. Got bored and skipped course 3 (reinforcement learning). Moved on to HOML (see next section).
+**Status**: Finished courses 1 and 2, course 3 in progress
 
 **Notes and colabs**:
 
@@ -83,23 +105,5 @@ existing TensorFlow code.
     -   Decision Trees: [notes](/coursera/coursera-ml-c2-wk4.pdf)
     -   Independent practice: [Forest cover type classification with XGBoost](https://colab.research.google.com/drive/1tCq19-iw8tLTT_foiI1w_D0YMnaBPmAx?usp=sharing)
     -   Independent practice: [Ad engagement regression with XGBoost](https://colab.research.google.com/drive/1mWdS4MMhtpvYqjK8vQcThXS7I90fqO8E)
-
-## Kaggle submissions
-
--   [MNIST without using neural networks](https://www.kaggle.com/dhconnelly/mnist-without-neural-nets)
--   [Titanic](https://www.kaggle.com/code/dhconnelly/titanic)
--   [Spaceship Titanic](https://www.kaggle.com/code/dhconnelly/spaceship-titanic/notebook)
--   [House Prices](https://www.kaggle.com/code/dhconnelly/house-prices)
-
-## Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow
-
-**Book**: [https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/](https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/)
-
-**Status**: In progress
-
-**Notes and Colabs**:
-
--   [Annotated Machine Learning Project Checklist](/ml-project-checklist.html) taken from Appendix A plus details and tips from other chapters
--   Chapter 2: End-to-End ML Project - [Colab](https://colab.research.google.com/drive/18JrgQZ3DRNn3qXmExQKAR9kuHNKOAdnn?usp=sharing)
--   Chapter 3: Classification - [Colab](https://colab.research.google.com/drive/1mhl0SME75Fsa9fd11hDHCYJ-8D0A9OjK)
--   Chapter 4: Training Models - [Colab](https://colab.research.google.com/drive/1YBZ9bZXJqzpxEEu9rNnRLZVaY3WeOdqC)
+-   Course 3: Unsupervised learning, recommender systems, reinforcement learning
+    -   In progress
