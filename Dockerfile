@@ -18,4 +18,4 @@ COPY --from=build-stage /app/sss ./sss
 # serve
 EXPOSE 8080
 USER nonroot:nonroot
-CMD ["./sss", "-build=false", "-port=8080", "-dstDir=target"]
+CMD ["./sss", "-build=false", "-port=8080", "-dstDir=target", "-enableCaching=false"]
