@@ -1,6 +1,5 @@
 === Notes: Learning Machine Learning ===
 
-
 [[home]](/)
 
 # Notes: Learning Machine Learning
@@ -16,12 +15,15 @@ lot of custom stuff. A lot has happened since then!
 
 I'll link notes and code below as I go along.
 
+***Edit***: This project is complete. See the [retrospective](#retrospective) below.
+
 ## Table of Contents
 
 -   [Google's Machine Learning Crash Course](#google-s-machine-learning-crash-course)
 -   [Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow](#hands-on-machine-learning-with-scikit-learn-keras-and-tensorflow) (abandoned)
 -   [Independent practice](#independent-practice)
 -   [Coursera Machine Learning Specialization](#coursera-machine-learning-specialization)
+-   [Retrospective](#retrospective)
 
 ## Google's Machine Learning Crash Course
 
@@ -66,7 +68,8 @@ course that I would highly recommend as an introduction.
 
 **Book**: [https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/](https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/)
 
-**Status**: Abandoned. Fantastic book but more practitioner-oriented than I'm looking for right now.
+**Status**: Abandoned. Fantastic book but goes way deeper into implementation
+concerns and library/tool usage than I was looking for at the time.
 
 **Notes and Colabs**:
 
@@ -92,7 +95,22 @@ course that I would highly recommend as an introduction.
 
 **Course**: [https://www.deeplearning.ai/courses/machine-learning-specialization/](https://www.deeplearning.ai/courses/machine-learning-specialization/)
 
-**Status**: In progress (finishing up the final week)
+**Status**: Done
+
+**Review**:
+
+Great course for learning the algorithms and ideas in more detail than the
+Google crash course. Lots of math (like backpropagation from scratch and so on)
+helped me develop a better sense of how things work than just playing around
+with Kaggle problems. Also, Andrew Ng's comments and tips based on his
+extensive experience were a nice feature. Unfortunately the programming labs
+were almost entirely useless - you implement a tiny bit of an algorithm based
+on literally translating a couple of equations into Python. It would have been
+much more interesting if the labs required you to build up the entire pipeline
+and algorithm from scratch (or with hints). If I hadn't worked through the
+first couple of chapters of
+[HOML](#hands-on-machine-learning-with-scikit-learn-keras-and-tensorflow) I
+wouldn't have had any idea how the labs worked.
 
 **Notes and colabs**:
 
@@ -108,4 +126,23 @@ course that I would highly recommend as an introduction.
 -   Course 3: Beyond supervised learning
     -   Unsupervised learning: [notes](/coursera/coursera-ml-c3-wk1.pdf)
     -   Recommender systems: [notes](/coursera/coursera-ml-c3-wk2.pdf)
-    -   Reinforcement learning: in progress
+    -   Reinforcement learning: [notes](/coursera/coursera-ml-c3-wk3.pdf)
+
+## Retrospective
+
+I spent a year on this project (Feb 2023 to Feb 2024), with almost all of the
+work work happening in the first six months (before I relocated to France over
+the summer, when I had new problems to deal with). The effort absolutely paid
+off professionally. Even if I didn't transition to AI work, my [current
+company](https://www.teads.com/) does a lot of ML, and the time I spent on this
+material made it possible for me to understand what kind of approaches we use
+and why and their tradeoffs, identify the largest ML engineering challenges
+we're facing, and have reasonable conversations with the team members about
+their work and its difficulty and impact. It also made it possible to reframe
+my previous work on a production ML system at Google in 2015-2016 into modern
+language and concepts.
+
+My next step is to dig further into Deep Learning and building stuff. I'll
+make a new post about that :)
+
+[[home]](/)
