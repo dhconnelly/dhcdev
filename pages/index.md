@@ -2,17 +2,21 @@
 
 # Daniel Connelly
 
-Principal Engineer at Teads in Paris. Previously at Google, Butterfly Network, and MIT Lincoln Laboratory. Find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
+Principal Engineer at [Teads](https://www.teads.com/) in Paris.
+
+I previously worked at Google for close to ten years, starting as an intern and leaving as a Staff engineer. I worked on tooling and implementation for the GWT and J2ObjC source-to-source compilers, Google Chrome (including enterprise features, password management, and autofill), Google Maps (including mobile app internals, full-stack feature development, a production ML system, data pipelines, and search), and the GCL configuration language (a bit like [Jsonnet](https://jsonnet.org/)). I also worked at [Butterfly Network](https://www.butterflynetwork.com/) on cloud-based real-time medical data and workflow integration systems (think HL7 and DICOM) and [MIT Lincoln Laboratory](https://www.ll.mit.edu/) on prototype service-oriented-architectures for DoD and FAA projects.
+
+You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
 
 ## Projects
 
 - An R-Tree library in Go: [rtreego](https://github.com/dhconnelly/rtreego)
-- A WIP compiler for a statically-typed language that compiles to WebAssembly: [june-lang](https://github.com/dhconnelly/june-lang)
+- A WIP compiler in Rust for a statically-typed language that runs on WebAssembly: [june-lang](https://github.com/dhconnelly/june-lang)
 - Other small VMs, bytecode compilers, and interpreters in [TypeScript](https://github.com/dhconnelly/parents), [OCaml](https://github.com/dhconnelly/ungulate), [Rust](https://github.com/dhconnelly/crab), [Go](https://github.com/dhconnelly/yalig), and [C++](https://github.com/dhconnelly/ts)
-- A proof of concept [semantic search engine](https://github.com/dhconnelly/exquiro-poc) for classical literature using Sentence Transformers
+- A proof of concept [Classics search engine](https://github.com/dhconnelly/exquiro-poc) in Python using Sentence Transformers
 - [Python code](https://github.com/dhconnelly/paip-python) for Peter Norvig's book Paradigms of Artificial Intelligence Programming
 - A simple static site compiler and web server in [Go](https://github.com/dhconnelly/sss) that runs this site
-- Advent of Code [2023](https://github.com/dhconnelly/advent-of-code-2023) in Rust (50/50 stars), [2022](https://github.com/dhconnelly/advent-of-code-2022) in C++ (50/50), [2021](https://github.com/dhconnelly/advent-of-code-2021) in Rust (45/50), [2020](https://github.com/dhconnelly/advent-of-code-2020) in Rust (50/50), [2019](https://github.com/dhconnelly/advent-of-code-2019) in Go (50/50)
+- Advent of Code [2023](https://github.com/dhconnelly/advent-of-code-2023) in Rust (50/50 stars), [2022](https://github.com/dhconnelly/advent-of-code-2022) in C++ (50/50), [2021](https://github.com/dhconnelly/advent-of-code-2021) in Rust (45/50), [2020](https://github.com/dhconnelly/advent-of-code-2020) in Rust (50/50), [2019](https://github.com/dhconnelly/advent-of-code-2019) in Go (50/50), and [C++ code](https://github.com/dhconnelly/synacorpp) that solves the [Synacor Challenge](https://www.reddit.com/r/adventofcode/comments/11pjsxk/synacor_challenge_unable_to_load_domain_is_it/)
 
 ## Blog
 
