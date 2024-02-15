@@ -68,8 +68,10 @@ course that I would highly recommend as an introduction.
 
 **Book**: [https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/](https://www.oreilly.com/library/view/hands-on-machine-learning/9781098125967/)
 
-**Status**: Abandoned. Fantastic book but goes way deeper into implementation
-concerns and library/tool usage than I was looking for at the time.
+**Status**: Abandoned. Fantastic book but goes way deeper into library/tool
+usage and a million applications than I was looking for. Still I think the
+first few chapters and their exercises helped me develop a reasonable
+understanding of the ML workflow.
 
 **Notes and Colabs**:
 
