@@ -13,7 +13,7 @@ You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://
 ## Projects
 
 - An R-Tree library in Go: [rtreego](https://github.com/dhconnelly/rtreego)
-- CodeCrafters: [my profile](https://app.codecrafters.io/users/dhconnelly), completed [SQLite solution in Java](https://github.com/dhconnelly/codecrafters-sqlite-java)
+- CodeCrafters: full [SQLite solution in Java](https://github.com/dhconnelly/codecrafters-sqlite-java)
 - A WIP compiler in Rust for a statically-typed language that runs on WebAssembly: [june-lang](https://github.com/dhconnelly/june-lang)
 - Other small VMs, bytecode compilers, and interpreters in [TypeScript](https://github.com/dhconnelly/parents), [OCaml](https://github.com/dhconnelly/ungulate), [Rust](https://github.com/dhconnelly/crab), [Go](https://github.com/dhconnelly/yalig), and [C++](https://github.com/dhconnelly/ts)
 - A proof of concept [Classics search engine](https://github.com/dhconnelly/exquiro-poc) in Python using Sentence Transformers
