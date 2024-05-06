@@ -4,10 +4,6 @@
 
 Principal Engineer at [Teads](https://www.teads.com/) in Paris.
 
-I previously spent close to ten years at Google, where I worked on Google Chrome (including enterprise features, password management, and autofill), Google Maps (including mobile app internals, full-stack feature development, a production ML system, data pipelines, and search), and the GCL configuration language (similar to Jsonnet). In two internships during my graduate studies I also worked on the GWT and J2ObjC source-to-source compilers.
-
-I also worked at [Butterfly Network](https://www.butterflynetwork.com/) on cloud-based real-time medical data and workflow integration systems (think HL7 and DICOM) and [MIT Lincoln Laboratory](https://www.ll.mit.edu/) on prototype service-oriented-architectures for DoD and FAA projects. I studied mathematics and computer science at Georgia Tech.
-
 You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
 
 ## Projects
