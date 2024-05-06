@@ -13,13 +13,12 @@ You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://
 ## Projects
 
 - An R-Tree library in Go: [rtreego](https://github.com/dhconnelly/rtreego)
-- CodeCrafters: full [SQLite solution in Java](https://github.com/dhconnelly/codecrafters-sqlite-java)
-- A WIP compiler in Rust for a statically-typed language that runs on WebAssembly: [june-lang](https://github.com/dhconnelly/june-lang)
-- Other small VMs, bytecode compilers, and interpreters in [TypeScript](https://github.com/dhconnelly/parents), [OCaml](https://github.com/dhconnelly/ungulate), [Rust](https://github.com/dhconnelly/crab), [Go](https://github.com/dhconnelly/yalig), and [C++](https://github.com/dhconnelly/ts)
+- A compiler in [Rust](https://github.com/dhconnelly/june-lang) for a simple language with type checking that runs on WebAssembly, a bytecode compiler and virtual machine with closures and garbage collection in [TypeScript](https://github.com/dhconnelly/parents), and other small VMs, bytecode compilers, and interpreters in [OCaml](https://github.com/dhconnelly/ungulate), [Rust](https://github.com/dhconnelly/crab), [Go](https://github.com/dhconnelly/yalig), and [C++](https://github.com/dhconnelly/ts)
 - A proof of concept [Classics search engine](https://github.com/dhconnelly/exquiro-poc) in Python using Sentence Transformers
 - [Python code](https://github.com/dhconnelly/paip-python) for Peter Norvig's book Paradigms of Artificial Intelligence Programming
 - A simple static site compiler and web server in [Go](https://github.com/dhconnelly/sss) that runs this site
-- Advent of Code [2023](https://github.com/dhconnelly/advent-of-code-2023) in Rust (50/50 stars), [2022](https://github.com/dhconnelly/advent-of-code-2022) in C++ (50/50), [2021](https://github.com/dhconnelly/advent-of-code-2021) in Rust (45/50), [2020](https://github.com/dhconnelly/advent-of-code-2020) in Rust (50/50), [2019](https://github.com/dhconnelly/advent-of-code-2019) in Go (50/50), and [C++ code](https://github.com/dhconnelly/synacorpp) that solves the [Synacor Challenge](https://www.reddit.com/r/adventofcode/comments/11pjsxk/synacor_challenge_unable_to_load_domain_is_it/)
+- CodeCrafters: SQLite in [Java (7/7)](https://github.com/dhconnelly/codecrafters-sqlite-java), Git in [Java (6/7 stages)](https://github.com/dhconnelly/codecrafters-git-java)
+- Advent of Code [2023](https://github.com/dhconnelly/advent-of-code-2023) in Rust (50/50 stars), [2022](https://github.com/dhconnelly/advent-of-code-2022) in C++ (50/50), [2021](https://github.com/dhconnelly/advent-of-code-2021) in Rust (46/50), [2020](https://github.com/dhconnelly/advent-of-code-2020) in Rust (50/50), [2019](https://github.com/dhconnelly/advent-of-code-2019) in Go (50/50), and [C++ code](https://github.com/dhconnelly/synacorpp) that solves the [Synacor Challenge](https://www.reddit.com/r/adventofcode/comments/11pjsxk/synacor_challenge_unable_to_load_domain_is_it/)
 
 ## Blog
 
