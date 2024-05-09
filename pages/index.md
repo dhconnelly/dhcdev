@@ -15,7 +15,7 @@ You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://
 - A proof of concept [Classics search engine](https://github.com/dhconnelly/exquiro-poc) in Python using Sentence Transformers
 - language implementation projects:
   + a small typed language that compiles to WebAssembly ([implemented in Rust](https://github.com/dhconnelly/june-lang))
-  + a small lisp that compiles to a custom bytecode vm with garbage collection ([implemented in TypeScript](https://github.com/dhconnelly/parents))
+  + a lisp that compiles to a bytecode vm with garbage collection ([implemented in TypeScript](https://github.com/dhconnelly/parents))
   + other small VMs, bytecode compilers, and interpreters in [OCaml](https://github.com/dhconnelly/ungulate), [Rust](https://github.com/dhconnelly/crab), [Go](https://github.com/dhconnelly/yalig), and [C++](https://github.com/dhconnelly/ts)
 
 ## Blog
