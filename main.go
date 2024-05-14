@@ -21,9 +21,9 @@ func build(outDir, srcDir, tmplPath string) {
 }
 
 func serve(dir string, port int) {
-	// https://gowebexamples.com/
-	// https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/
-	// https://blog.cloudflare.com/exposing-go-on-the-internet
+	if err := serveDirectory(dir, port); err != nil {
+		log.Fatalf("serve: %s", err)
+	}
 }
 
 func main() {
