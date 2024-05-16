@@ -10,9 +10,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/parser"
+
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 )
 
 type page struct {
@@ -20,15 +25,48 @@ type page struct {
 	Content template.HTML
 }
 
+var titlePat = regexp.MustCompile(`^=== ([^=]+) ===$`)
+
+func readTitle(r *bufio.Reader) (string, error) {
+	line, err := r.ReadString('\n')
+	if err != nil {
+		return "", fmt.Errorf("error reading title: %w", err)
+	}
+	ms := titlePat.FindStringSubmatch(line[:len(line)-1])
+	if len(ms) != 2 {
+		return "", fmt.Errorf("title is missing")
+	}
+	return ms[1], nil
+}
+
 type builder struct {
 	srcDir string
 	outDir string
+	md     goldmark.Markdown
 	tmpl   *template.Template
+}
+
+func newBuilder(srcDir, outDir string, tmpl *template.Template) *builder {
+	md := goldmark.New(
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
+		goldmark.WithExtensions(
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("monokai"),
+				highlighting.WithFormatOptions(
+					chromahtml.WithLineNumbers(true),
+					chromahtml.TabWidth(4),
+				),
+			),
+		),
+	)
+	return &builder{srcDir: srcDir, outDir: outDir, md: md, tmpl: tmpl}
 }
 
 func (b *builder) renderPage(w io.Writer, r io.Reader) error {
 	br := bufio.NewReader(r)
-	title, err := br.ReadBytes('\n')
+	title, err := readTitle(br)
 	if err != nil {
 		return err
 	}
@@ -37,7 +75,7 @@ func (b *builder) renderPage(w io.Writer, r io.Reader) error {
 		return err
 	}
 	var buf bytes.Buffer
-	if err = goldmark.Convert(content, &buf); err != nil {
+	if err = b.md.Convert(content, &buf); err != nil {
 		return err
 	}
 	return b.tmpl.Execute(w, page{
@@ -106,7 +144,7 @@ func BuildSite(outDir, srcDir, tmplPath string) error {
 		return err
 	}
 	log.Printf("building from %s to %s", srcDir, outDir)
-	b := builder{srcDir: srcDir, outDir: outDir, tmpl: tmpl}
+	b := newBuilder(srcDir, outDir, tmpl)
 	return fs.WalkDir(
 		os.DirFS(srcDir), ".",
 		func(path string, d fs.DirEntry, err error) error {

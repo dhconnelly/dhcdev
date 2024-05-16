@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 )
 
@@ -23,8 +22,7 @@ func main() {
 		}
 	}
 	if *shouldServe {
-		addr := fmt.Sprintf("0.0.0.0:%d", *port)
-		if err := ServeDirectory(*outDir, addr); err != nil {
+		if err := ServeDirectory(*outDir, *port); err != nil {
 			log.Fatalf("serve: %s", err)
 		}
 	}

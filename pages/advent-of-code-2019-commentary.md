@@ -33,7 +33,7 @@ we iterate over each line and convert it. For part 1 we just apply the
 fuelToMass function to each value and sum the total, while for part 2 we
 repeatedly apply fuelToMass until it becomes negative.
 
-```
+```go
 func fuelForMass(mass int) int {
   return (mass / 3) - 2
 }
@@ -56,7 +56,7 @@ I spent more time deciding how to structure the program to do the scanning and
 parsing and so on in a reusable manner. Here's a place where generics would be
 nice:
 
-```
+```go
 func scanLines(r io.Reader) <-chan int {
   ch := make(chan int)
   go func() {
@@ -89,7 +89,7 @@ solution that's less bad than using `interface{}` is just passing the entire
 line, and letting each problem define a channel transformation function around
 a lines channel:
 
-```
+```go
 func scan(in <-chan string) <-chan int {
   ch := make(chan int)
   go func() {
@@ -117,7 +117,7 @@ and everyone writes very short solutions! So I wrote a shorter, less modular
 version that uses `fmt.Fscanf` instead of `bufio.Scanner` with `fuelForMass`
 and `fuelSum` as defined above:
 
-```
+```go
 func main() {
   f, err := os.Open(os.Args[1])
   if err != nil {
@@ -152,7 +152,7 @@ commas, but defining a `bufio.SplitFunc` and using `bufio.Scanner` would be
 necessary for inputs that don't fit into memory. After that, you just convert
 each token to an integer to get the data:
 
-```
+```go
 func readData(path string) []int {
   txt, err := ioutil.ReadFile(path)
   if err != nil {
@@ -175,7 +175,7 @@ Running the computer is just a for-loop with a switch statement. Make sure
 you're double-indexing into the data, though, since the arguments to the
 opcode specify _addresses_ and not the argument values themselves:
 
-```
+```go
 func execute(data []int) {
   for i := 0; i < len(data); i += 4 {
     switch data[i] {
@@ -199,7 +199,7 @@ increment.
 For part 2 I wrapped execution into a function to create a local copy of the
 data to avoid reusing memory from previous attempts, as required:
 
-```
+```go
 func executeWith(data []int, noun, verb int) int {
   local := make([]int, len(data))
   copy(local, data)
@@ -216,7 +216,7 @@ goroutines might speed it up. Quitting early when one of the goroutines found
 the answer could be implemented with a second `done` channel. I might come
 back later and implement that, but for now here's the rest of the code:
 
-```
+```go
 func main() {
   data := readData(os.Args[1])
 
@@ -263,7 +263,7 @@ the paths. We'll then find intersections along the two paths. The
 vector-path-to-coord-path conversion is pretty verbose; without gofmt I'd just
 collapse all the switch case branches into single lines.
 
-```
+```go
 type vec struct {
   dir  rune
   dist int
@@ -324,7 +324,7 @@ To intersect the two coordinate paths, we dump the first one into a
 `map[coord]bool` representing a set, and then look for all the coordinates in
 the second path that are in that set.
 
-```
+```go
 func findIntersects(coords1, coords2 []coord) []coord {
   coords := make(map[coord]bool)
   for _, c := range coords1 {
@@ -343,7 +343,7 @@ func findIntersects(coords1, coords2 []coord) []coord {
 Finding the closest intersection is just finding the one with the smallest
 magnitude.
 
-```
+```go
 func dist(c coord) int {
   return int(math.Abs(float64(c.x)) + math.Abs(float64(c.y)))
 }
@@ -365,7 +365,7 @@ order in which they were visited, we can just iterate to find the index of the
 intersection point. Then we iterate over each intersection and add those step
 counts for the two paths:
 
-```
+```go
 func stepsTo(to coord, path []coord) int {
   for i, cur := range path {
     if cur == to {
@@ -403,7 +403,7 @@ Hopefully this will come in handy later :)
 This was much more straightforward than the last two days. Loop over every
 number in the given range and test whether it's valid:
 
-```
+```go
 func countValidPasswords(from, to int) (int, int) {
   numValid1, numValid2 := 0, 0
   for i := from; i < to; i++ {
@@ -422,7 +422,7 @@ func countValidPasswords(from, to int) (int, int) {
 
 We need access to the individual digits in order to check validity:
 
-```
+```go
 func toPassword(x int) [6]byte {
   var p [6]byte
   for i := 5; i >= 0; i-- {
@@ -437,7 +437,7 @@ For checking part 1 validity, we only need to look at one digit at a time and
 its neighbor to the right. We can stop immediately if we find a decreasing
 digit, and all we have to track is whether we've already seen a repeat.
 
-```
+```go
 func valid(p [6]byte) bool {
   twoAdjacentSame := false
   for i := 0; i < len(p)-1; i++ {
@@ -458,7 +458,7 @@ to tracking whether the condition has already been satisfied. Since we can
 only know if the repeating group is length 2 after exiting it, we have to
 check it in the loop as well as after exiting:
 
-```
+```go
 func valid(p [6]byte) (bool, bool) {
   twoAdjacentSame, onlyTwoAdjacentSame := false, false
   matchLen := 1
@@ -505,7 +505,7 @@ the impact of (too much? :) professional software development.
 
 This is deeply satisfying:
 
-```
+```bash
 day5 $ time ./day5 input.txt 1 5
 9025675
 11981754
@@ -526,7 +526,7 @@ Reading the input is just a string split on commas and mapping `strconv.Atoi`,
 so I'll omit that and jump to instruction parsing. First, how to represent
 modes (unneccessary actually, could just store a byte) and instructions:
 
-```
+```go
 type mode int
 
 const (
@@ -545,7 +545,7 @@ To parse an `instr`, we split the instruction integer into the opcode and
 modes parts using `i%100` and `i/100`, then pull off individual mode bits one
 at a time. This resembles the password validation from [Day 4](#day-4):
 
-```
+```go
 func parseInstr(i int) instr {
   var in instr
   in.opcode = i % 100
@@ -563,7 +563,7 @@ keep pulling off leading zeroes for as many parameters are expected for the
 given opcode. We keep the number of parameters expected for each opcode in a
 map:
 
-```
+```go
 var opcodeToParam = map[int]int{
   1: 3, 2: 3, 3: 1, 4: 1, 5: 2, 6: 2, 7: 3, 8: 3, 99: 0,
 }
@@ -575,7 +575,7 @@ we have two parameter modes (immediate and position). I extracted lookup into
 a function that handles this so it doesn't further clutter the execution
 logic:
 
-```
+```go
 func get(data []int, i int, m mode) int {
   v := data[i]
   switch m {
@@ -595,7 +595,7 @@ long now; if we keep adding opcodes, it it would be worth generalizing a bit.
 
 Let's look at the code first, and then I'll explain a bit more.
 
-```
+```go
 func run(data []int, in <-chan int, out chan<- int) {
   for i := 0; i < len(data); {
     instr := parseInstr(data[i])
@@ -680,7 +680,7 @@ single input value on a buffered channel so it doesn't block, then read and
 discard all output values until the last one, which is returned as the final
 result.
 
-```
+```go
 func execute(data []int, input int) int {
   data = copied(data)
   in, out := make(chan int, 1), make(chan int)
@@ -719,7 +719,7 @@ regardless of difficulty, of which I think a large part is reading data and
 building the right data structures. This required only one data structure,
 though, and parsing it was simple -- not even any `strconv.Atoi` today.
 
-```
+```go
 type orbit struct {
   orbiter, orbited string
 }
@@ -732,7 +732,7 @@ real graph structure would have required either learning its API or building
 one. This is one nice property of using a standard library / built-in language
 features over dependencies: usage patterns are the ones you already know.
 
-```
+```go
 func orbitMap(orbits []orbit) map[string]string {
   m := make(map[string]string)
   for _, o := range orbits {
@@ -747,7 +747,7 @@ is orbiting `v`, and so on recursively until reaching an object that orbits
 nothing. I used iteration here instead of explicit recursion, again because
 it's so straightforward with a for loop over the map:
 
-```
+```go
 func chain(k string, m map[string]string) []string {
   var chain []string
   for v, ok := m[k]; ok; v, ok = m[v] {
@@ -776,7 +776,7 @@ For part 2, we want to find the orbit chains for `YOU` and `SAN`, find the
 object `o` that is closest to both of them, and return the sum of the distance
 from each of `YOU` and `SAN` to `o`:
 
-```
+```go
 func closestAncestor(chain1, chain2 []string) (string, int, int) {
   m := make(map[string]int)
   for i, k := range chain1 {
@@ -804,7 +804,7 @@ earlier in the loop over the second chain.
 
 The number of required transfers is just the sum of these two distances:
 
-```
+```go
 func transfers(orbits map[string]string, from, to string) int {
   fromChain, toChain := chain(from, orbits), chain(to, orbits)
   _, dist1, dist2 := closestAncestor(fromChain, toChain)
@@ -827,7 +827,7 @@ closed. Eventually I gave up and closed it manually after n! values had been
 produced. This could surely be much cleaner. I look forward to reading the
 soultions where they produce all of these in a single line of Python...
 
-```
+```go
 func fact(n int) int {
   if n < 1 {
     return 1
@@ -880,7 +880,7 @@ takes and returns a channel. Then we can send and receive an arbitrary number
 of signals, which helps in part 2. The only trickiness is appending the phase
 setting to the front of the input channel.
 
-```
+```go
 func execute(data []int, phase int, signals <-chan int) chan int {
   data = copied(data)
   in, out := make(chan int), make(chan int)
@@ -901,7 +901,7 @@ amplifiers by using the output value from one amplifier as the input to the
 next amplifier. The output from the final amplifier's output channel is the
 generated signal.
 
-```
+```go
 func executeSeq(data []int, s seq) int {
   out := 0
   for _, phase := range s {
@@ -918,7 +918,7 @@ To find the max signal, we iterate over all sequences using `genSeqs` and
 track the largest signal produced so far. This implementation takes the
 execution function as a parameter, which we need for part 2.
 
-```
+```go
 func maxSignal(data []int, exec func([]int, seq) int, nums []int) int {
   max := 0
   for seq := range genSeqs(nums) {
@@ -940,7 +940,7 @@ save a copy of it and pipe it back into the first amplifier until the channel
 is closed (which happens when the final amplifier halts). The last output
 value we saw is the signal.
 
-```
+```go
 func executeWithFeedback(data []int, s seq) int {
   // send the initial input
   in := make(chan int, 1)
@@ -966,7 +966,7 @@ func executeWithFeedback(data []int, s seq) int {
 This function is used for a second call to `maxSignal` as defined above, since
 the looping over sequences and tracking max signal logic is identical.
 
-```
+```go
 func main() {
   data := read(os.Args[1])
   fmt.Println(maxSignal(data, executeSeq, []int{0, 1, 2, 3, 4}))
@@ -989,7 +989,7 @@ slice of the sequences. Here it is:
 
 {% raw %}
 
-```
+```go
 func genSeqsRec(nums []int, used map[int]bool, until int) []seq {
   if until == 0 {
     return []seq{{}}
@@ -1037,7 +1037,7 @@ in memory.
 Anyway, we first read in the pixel data layer-by-layer into an image
 structure:
 
-```
+```go
 type image struct {
   width, height int
   layers        [][]byte
@@ -1048,7 +1048,7 @@ To compute the "checksum", we iterate over the layers, find the one that has
 the fewest zeroes, and multiply the number of ones and twos together. Here's
 a place where Go is just depressingly overboard-verbose.
 
-```
+```go
 func zeroes(pixels []byte) int {
   n := 0
   for _, p := range pixels {
@@ -1100,7 +1100,7 @@ using channels and goroutines.
 To decode the image, we can start at the bottom layer and move upwards, always
 replacing a pixel if it's non-transpartent:
 
-```
+```go
 func apply(base, layer []byte) {
   for i := 0; i < len(base); i++ {
     if layerPix := layer[i]; layerPix != 2 {
@@ -1120,7 +1120,7 @@ func decode(img image) []byte {
 
 Now we just need to print it:
 
-```
+```go
 func printImage(b []byte, width, height int) {
   for i := 0; i < height; i++ {
     for j := 0; j < width; j++ {
@@ -1148,7 +1148,7 @@ changes.
 
 To begin with, I extracted machine state into a struct:
 
-```
+```go
 type machine struct {
   data []int
   in   <-chan int
@@ -1164,7 +1164,7 @@ func newMachine(data []int, in <-chan int, out chan<- int) *machine {
 
 I also extracted get/set/read/write into methods:
 
-```
+```go
 func (m *machine) get(i int, md mode) int {
   v := m.data[i]
   switch md {
@@ -1201,7 +1201,7 @@ func (m *machine) write(x int) {
 
 Then I defined enums for the opcodes:
 
-```
+```go
 type opcode int
 
 const (
@@ -1221,7 +1221,7 @@ This makes it easier to read the code and to refer to them in the arity map,
 for example, and in the new handler map: I also moved opcode implementations
 out of the giant for-switch and into a map of handlers. For example:
 
-```
+```go
 type handler func(m *machine, pc int, instr instruction) (int, bool)
 
 var handlers = map[opcode]handler{
@@ -1238,7 +1238,7 @@ var handlers = map[opcode]handler{
 The handler returns the updated program counter and a boolean indicating
 whether the machine should continue running. So HALT is just:
 
-```
+```go
 halt: func(m *machine, pc int, instr instruction) (int, bool) {
   return 0, false
 },
@@ -1247,7 +1247,7 @@ halt: func(m *machine, pc int, instr instruction) (int, bool) {
 This simplifies the core execution logic, which now just adjusts the program
 counter and invokes opcode handlers.
 
-```
+```go
 func (m *machine) run() {
   for pc, ok := 0, true; ok; {
     instr := parseInstruction(m.data[pc])
@@ -1267,7 +1267,7 @@ The full code for the extracted intcode machine is on
 [GitHub](https://github.com/dhconnelly/advent-of-code-2019/blob/master/intcode).
 The package's public interface is:
 
-```
+```bash
 $ go doc github.com/dhconnelly/advent-of-code-2019/intcode
 
 package intcode // import "github.com/dhconnelly/advent-of-code-2019/intcode"
@@ -1296,7 +1296,7 @@ not done _using_ it, but okay :) Today's problem was not bad for me:
 -   Adding relative mode support involved adding a field to the `machine` struct
     and updating `get` and `set` to support that mode.
 
-```
+```go
 func (m *machine) get(i int, md mode) int {
   v := m.data[i]
   switch md {
@@ -1341,7 +1341,7 @@ on before the right structure starts to appear.
 Quick stats, since I was surprised that it didn't take my Chromebook longer
 to run, given the warning that it may take a few seconds:
 
-```
+```bash
 day9 $ time ./day9 input.txt 1 2
 2494485073
 44997
@@ -1373,7 +1373,7 @@ added some comments. This affects
 as well as its callers in
 [opcodes.go](https://github.com/dhconnelly/advent-of-code-2019/blob/master/intcode/opcodes.go):
 
-```
+```go
 // Retrieves a value according to the specified mode.
 //
 // * In immediate mode, returns the value stored at the given address.
@@ -1425,7 +1425,7 @@ func (m *machine) set(addr, val int64, md mode) {
 I think that's a bit clearer, but it changes the callers of `set` to provide
 the simple argument location instead of dereferencing it first. For example:
 
-```
+```go
 var handlers = map[opcode]handler{
   /* snip */`
   mul: func(m *machine, instr instruction) bool {
@@ -1479,7 +1479,7 @@ The second approach looks deceptively simple, but all the complexity is in the
 "all possible (dx,dy) pairs" and "continue along diff" lines. Look at all this
 complexity just for finding the (dx,dy) pairs:
 
-```
+```go
 func allStepsFrom(g grid, from geom.Pt2, dx, dy int) []geom.Pt2 {
   var steps []geom.Pt2
   reachable := make(map[geom.Pt2]bool)
@@ -1521,7 +1521,7 @@ Needless to say, this also burned a ton of time in debugging. Now, once we
 have all those steps computed, we visit each point and proceed along the step
 lines:
 
-```
+```go
 func visit(visible map[geom.Pt2]int, g grid, p geom.Pt2, steps []geom.Pt2) {
   for _, d := range steps {
     var cur geom.Pt2
@@ -1545,7 +1545,7 @@ func countVisible(g grid, steps []geom.Pt2) map[geom.Pt2]int {
 To find the "best" point for placing the space station, we just find the point
 with the highest visible count:
 
-```
+```go
 func bestPoint(g grid, counts map[geom.Pt2]int) (geom.Pt2, int) {
   var best geom.Pt2
   count := 0
@@ -1564,7 +1564,7 @@ chosen space station position, we find all the points in the grid that are
 visible using the steps that we already computed, and do this in a loop until
 we've eliminated every asteroid position from the grid:
 
-```
+```go
 func vaporizeAll(g grid, from geom.Pt2, steps []geom.Pt2) []geom.Pt2 {
   ordered := make([]geom.Pt2, len(g.points))
   for vaporized := 0; vaporized < len(g.points)-1; {
@@ -1585,7 +1585,7 @@ directly above the starting point, so we have to (1st) find all reachable
 points, (2nd) sort them by angle from the space station, and (3rd) reorder
 them starting from the first one that has an angle greater than -pi/2:
 
-```
+```go
 type byAngleFrom struct {
   p  geom.Pt2
   ps []geom.Pt2
@@ -1649,7 +1649,7 @@ simple matter of iterating over every point, finding the angle from the
 starting one, and storing it as reachable as long as that angle has never been
 seen or it's closer than the previous one for that angle:
 
-```
+```go
 func angle(dy, dx int) float64 {
   g := ints.Abs(ints.Gcd(dx, dy))
   if g == 0 {
@@ -1679,7 +1679,7 @@ func reachable(g grid, from geom.Pt2) map[float64]geom.Pt2 {
 Finding the best location for the space station now involves picking the point
 that has the most reachable points (we just ignore the angles for this):
 
-```
+```go
 func maxReachable(g grid) (geom.Pt2, int) {
   maxPt, max := geom.Zero2, 0
   for p, ok := range g.points {
@@ -1699,7 +1699,7 @@ Sorting by angle can avoid the sort.Interface implementation and just sort an
 angle slice directly, since we have a map from angles to points, and then we
 can easily retrieve the points in angle-sorted order as before:
 
-```
+```go
 func sortedByAngle(ps map[float64]geom.Pt2) []geom.Pt2 {
   sorted := make([]float64, 0, len(ps))
   for a := range ps {
@@ -1721,7 +1721,7 @@ func sortedByAngle(ps map[float64]geom.Pt2) []geom.Pt2 {
 Now we can vaporize, as before, by repeatedly finding reachable asteroid
 points from the space station and removing them from the grid in angle-order:
 
-```
+```go
 func vaporize(g grid, from geom.Pt2) []geom.Pt2 {
   vaporized := make([]geom.Pt2, len(g.points)-1)
   for i := 0; i < len(g.points)-1; {
@@ -1756,7 +1756,7 @@ inputs according to the color of the tile it's on and reading the (color,
 direction) outputs until the channel is closed. I store the current colors in
 a `map[geom.Pt2]color` and the current position and orientation of the robot.
 
-```
+```go
 func run(data []int64, initial color) grid {
   in := make(chan int64)
   out := intcode.RunProgram(data, in)
@@ -1786,7 +1786,7 @@ Channels are fun :)
 
 Okay, so for part 1 we just need the number of tiles that were painted:
 
-```
+```go
 func main() {
   data, err := intcode.ReadProgram(os.Args[1])
   if err != nil {
@@ -1808,7 +1808,7 @@ which we can iterate over every position within those bounds and retrieve its
 color from the map we created above. Since Go maps return a zero value when a
 key isn't present, and the zero value for a color is `BLACK`, this is easy.
 
-```
+```go
 func printGrid(g grid) {
   minX, minY := math.MaxInt64, math.MaxInt64
   maxX, maxY := math.MinInt64, math.MinInt64
@@ -1844,7 +1844,7 @@ problems I ran into there.
 
 Okay, so for part 1, each moon has position and velocity:
 
-```
+```go
 type moon struct {
   p, v geom.Pt3
 }
@@ -1853,7 +1853,7 @@ type moon struct {
 We simulate the system by repeatedly stepping through the gravity and velocity
 updates:
 
-```
+```go
 func step(ms []moon) {
   applyGravity(ms)
   applyVelocity(ms)
@@ -1871,7 +1871,7 @@ func simulate(ms []moon, n int) []moon {
 
 `applyGravity` is a bit verbose:
 
-```
+```go
 func applyGravity(ms []moon) {
   for i := 0; i < len(ms)-1; i++ {
     for j := i + 1; j < len(ms); j++ {
@@ -1901,7 +1901,7 @@ func applyGravityPair(m1, m2 *moon) {
 
 But velocity is simple:
 
-```
+```go
 func applyVelocity(ms []moon) {
   for i := range ms {
     ms[i].p.TranslateBy(ms[i].v)
@@ -1911,7 +1911,7 @@ func applyVelocity(ms []moon) {
 
 Finding the total system energy is just a loop, vector norms, and arithmetic:
 
-```
+```go
 func moonEnergy(m moon) int {
   return m.p.ManhattanNorm() * m.v.ManhattanNorm()
 }
@@ -1927,7 +1927,7 @@ func energy(ms []moon) int {
 
 That's it for part 1.
 
-```
+```go
 func main() {
   ms := readPoints(os.Args[1])
   fmt.Println(energy(simulate(ms, 1000)))
@@ -1993,7 +1993,7 @@ On to the code :)
 First we flatten the state so that we can treat each coordinate's position and
 velocity separately:
 
-```
+```go
 type state struct {
   px, py, pz, vx, vy, vz [4]int64
 }
@@ -2001,7 +2001,7 @@ type state struct {
 
 Each simulation step is pretty straightforward now:
 
-```
+```go
 func applyGravity(px, vx *[4]int64) {
   for i := 0; i < len(px)-1; i++ {
     for j := i + 1; j < len(px); j++ {
@@ -2035,7 +2035,7 @@ iteration counts out of the channel and compute the least common multiple --
 the smallest number that is a multiple of all three, which should be the
 number of steps it takes to cycle all three dimensions.
 
-```
+```go
 func findLoopCoord(px, vx [4]int64, ch chan<- int64) {
   pi, vi := px, vx
   for i := int64(1); ; i++ {
@@ -2106,7 +2106,7 @@ on to the code, before I talk about how I implemented beating the games.
 
 For tiles and joystick position I defined some enums, as usual:
 
-```
+```go
 type TileId int
 
 const (
@@ -2131,7 +2131,7 @@ For overall game state and communication with the wrapper main I added a
 we need how many tiles were written; probably not necessary but I'd added it
 in part 1 and didn't remove it):
 
-```
+```go
 type ScreenTiles map[geom.Pt2]TileId
 
 type GameState struct {
@@ -2147,7 +2147,7 @@ the screen -- implemented with a goroutine that does a blocking read and emits
 key events on a channel -- and finally a `time.Tick` channel for controlling
 the i/o loop speed:
 
-```
+```go
 func readEvents(screen tcell.Screen) chan *tcell.EventKey {
   ch := make(chan *tcell.EventKey)
   go func() {
@@ -2191,7 +2191,7 @@ current joystick channel if the machine is trying to read it, otherwise
 continue without blocking), and the output channel (to read the screen updates
 and detect halting):
 
-```
+```go
   /* snip */
 loop:
   for {
@@ -2240,7 +2240,7 @@ loop:
 That's the core of the game logic. Rendering the various tiles uses some maps
 with predetermined characters:
 
-```
+```go
 func draw(screen tcell.Screen, x, y int, tile TileId) {
   screen.SetContent(x, y, tileToRune[tile], nil, 0)
   screen.Show()
@@ -2411,7 +2411,7 @@ reduce the amount of chemicals to produce for some other reaction.
 
 Types:
 
-```
+```go
 type quant struct {
   amt  int
   chem string
@@ -2428,7 +2428,7 @@ first use whatever excess we have, then build however much more we need to
 satisfy the appropriate reaction and store any excess, then recursively find
 the amount of ore required to satisfy that reaction.
 
-```
+```go
 func oreNeeded(
   chem string, amt int,
   reacts map[string]reaction,
@@ -2508,7 +2508,7 @@ problem simplified drastically -- as did the code.
 
 As usual, we start with some enums:
 
-```
+```go
 type status int
 
 const (
@@ -2530,7 +2530,7 @@ const (
 I also abstracted away the intcode I/O into a `droid` struct that can move
 about:
 
-```
+```go
 type droid struct {
   in  chan<- int64
   out <-chan int64
@@ -2547,7 +2547,7 @@ assume we're already there, and then we move to each neighbor,
 marking the status of that move on the map, recursively visit it, and then
 we step back from that neighbor and move to the next one:
 
-```
+```go
 func (d *droid) visit(p geom.Pt2, m map[geom.Pt2]status) {
   // try to move to each unvisted neighbor, recurse, then return
   for dir, dp := range directions {
@@ -2578,7 +2578,7 @@ The function `opposite` just returns a direction's opposite (since we need to
 move back to our original spot from a neighbor), and `neighbors` is a map of
 each direction to the necessary vectors:
 
-```
+```go
 func opposite(dir direction) direction {
   switch dir {
   case NORTH:
@@ -2612,7 +2612,7 @@ using a queue, and we add neighbors of a given node to the end of the queue.
 The code to find all shortest paths is simpler than finding a single one, so
 here's the entire thing:
 
-```
+```go
 type node struct {
   p geom.Pt2
   n int
@@ -2654,7 +2654,7 @@ func shortestPaths(from geom.Pt2, m map[geom.Pt2]status) map[geom.Pt2]int {
 Then, to find the length of the shortest path to the oxygen system, we just
 return the distance of the oxygen system's node:
 
-```
+```go
 func findOxygen(m map[geom.Pt2]status) geom.Pt2 {
   for p, s := range m {
     if s == OXGN {
@@ -2672,7 +2672,7 @@ func shortestPath(from, to geom.Pt2, m map[geom.Pt2]status) int {
 
 Hooking it all together, we have:
 
-```
+```go
 func main() {
   data, err := intcode.ReadProgram(os.Args[1])
   if err != nil {
@@ -2689,7 +2689,7 @@ time it takes to reach it is the time it takes for the entire area to fill
 with oxygen. Since we know all the shortest path distances already, we just
 find the longest one of those:
 
-```
+```go
 func longestPath(from geom.Pt2, m map[geom.Pt2]status) int {
   max := 0
   for _, n := range shortestPaths(from, m) {
@@ -2715,7 +2715,7 @@ This is the longest I've spent on any day so far, but I did eventually get it
 on my own! The first part was straightforward -- define the signal pattern and
 apply it to the input signal 100 times:
 
-```
+```go
 func coef(row, col int) int {
   switch (col / row) % 4 {
   case 0: return 0
@@ -2770,7 +2770,7 @@ elements of each row of `A` (i.e. only need to precompute those coefficients).
 
 So far the code looked like this:
 
-```
+```go
 func extractMessage(signal []int, reps, phases, offset, digits int) []int {
   // allocate the [offset, end) slice for computing the message
   msg := sliceSignal(signal, offset, len(signal)*reps)
@@ -2830,7 +2830,7 @@ computes the answer very quickly! This makes sense: the only allocation
 now is for the repeated signal from the offset (something like 500k integers,
 which should be about 4 MB at 8 bytes per integer).
 
-```
+```go
 func extractMessage(signal []int, reps, phases, offset, digits int) []int {
   msg := sliceSignal(signal, offset, len(signal)*reps)
   n := len(msg)
@@ -2872,7 +2872,7 @@ the data until devising something based on the properties of the specific case
 
 For part 1, finding intersections, we start by reading the grid from the Intcode machine.
 
-```
+```go
 type grid struct {
   height, width int
   g             map[geom.Pt2]rune
@@ -2902,7 +2902,7 @@ func readGridFrom(out <-chan int64) (grid, bool) {
 Then we construct an adjacency list, where two points are adjacent if their
 Manhattan distance is 1 and neither is empty space (ASCII '.').
 
-```
+```go
 func (g grid) neighbors(p geom.Pt2) []geom.Pt2 {
   var nbrs []geom.Pt2
   for _, nbr := range p.ManhattanNeighbors() {
@@ -2935,7 +2935,7 @@ func readGraph(g grid) map[geom.Pt2][]geom.Pt2 {
 Now we can find intersections by simply finding all points that have more than
 two neighbors, and the alignment sum is computed over those points:
 
-```
+```go
 func intersections(m map[geom.Pt2][]geom.Pt2) []geom.Pt2 {
   var ps []geom.Pt2
   for p, edges := range m {
@@ -2961,7 +2961,7 @@ For part 2, let me start with the framework for providing programs to the
 robot and reading its responses. All I/O is line-based, so we need to be able
 to read and write entire strings at a time, terminated by `'\n'`:
 
-```
+```go
 func writeLine(ch chan<- int64, line string) {
   for _, c := range line {
     ch <- int64(c)
@@ -2985,7 +2985,7 @@ To run the program headless we have to read the grid once at the beginning,
 read the input prompt lines before each input line, and then ignore all output
 but the last digit. This took a bit of trial-and-error to figure out.
 
-```
+```go
 func computeDust(data []int64, prog [4]string) int64 {
   data = ints.Copied64(data)
   data[0] = 2
@@ -3142,7 +3142,7 @@ link to the source:
 Straightforward part 1, we just repeatedly run the program with a
 given x,y pair and map out the 50x50 space:
 
-```
+```go
 type drone struct {
   prog []int64
 }
@@ -3289,7 +3289,7 @@ looked like in that initial 50x50 space:
 So I implemented the equation in Go to be able to run it faster
 and then iterated over the candidate space:
 
-```
+```go
 func fastTest(x, y int) bool {
   return 14*x*y > ints.Abs(149*x*x-127*y*y)
 }
@@ -3327,7 +3327,7 @@ depth-aware locations. For the maze, I keep the raw grid data,
 rectangles specifying the outer and inner donut maze boundaries,
 and the location of each portal and a list of its adjacent tiles.
 
-```
+```go
 type maze struct {
   g     grid
   outer geom.Rect
@@ -3348,7 +3348,7 @@ in mind that outer tiles at the top level aren't passable. Then
 when returning the list of neighbors we make sure to update the
 depth appropriately for the portal-neighbors.
 
-```
+```go
 func (m maze) adjacent(from point) []point {
   if m.g.g[from.p] == wall {
     return nil
@@ -3402,7 +3402,7 @@ only difference between part 1 and part 2 is the node-equality
 function to determine when we've reached our destionation: for
 part 1 we ignore the depth.
 
-```
+```go
 type bfsNode struct {
   p point
   d int
@@ -3447,7 +3447,7 @@ func shortestPath(
 
 To kick it off we just do:
 
-```
+```go
 fmt.Println(shortestPath(m, lbl("AA"), lbl("ZZ"), eq)) // part 1
 fmt.Println(shortestPath(m, lbl("AA"), lbl("ZZ"), depthEq)) // part 2
 ```
@@ -3661,7 +3661,7 @@ much smaller.
 
 So I wrote a small custom bitset implementation:
 
-```
+```go
 type bitset int64
 
 func (b bitset) get(i int) bool {
@@ -3680,7 +3680,7 @@ func (b *bitset) set(i int, value bool) {
 This backs a `layout` struct that tracks the current infestation
 state:
 
-```
+```go
 type layout struct {
   bits   bitset
   width  int
@@ -3695,7 +3695,7 @@ func (l *layout) alive(row, col int) bool {
 Getting the neighboring bug counts is pretty straightforward,
 just checking each direction (if not at an edge):
 
-```
+```go
 func (l *layout) adjacent(row, col int) int {
   adj := 0
   if row > 0 && l.alive(row-1, col) {
@@ -3717,7 +3717,7 @@ func (l *layout) adjacent(row, col int) int {
 Then updating the state from one minute to the next is just
 applying the given rules:
 
-```
+```go
 func (l *layout) next() {
   next := l.bits
   for row := 0; row < l.height; row++ {
@@ -3738,7 +3738,7 @@ func (l *layout) next() {
 To find a repeat we just call `next()` repeatedly and store the
 intermediate states in a `map`:
 
-```
+```go
 func findRepeat(l layout) bitset {
   m := map[bitset]bool{l.bits: true}
   for {
@@ -3756,7 +3756,7 @@ in two directions, up and down. I decided on a representation
 similar to that from [day 20](#day-20), where each point in space
 is paired with a depth:
 
-```
+```go
 type tile struct {
   p     geom.Pt2
   depth int
@@ -3767,7 +3767,7 @@ Then we keep these tiles in a `map[tile]bool` indicating whether
 the given tile has a bug. This makes it easy to count the number
 of active bugs at any given time.
 
-```
+```go
 type grid struct {
   width, height int
   g             map[tile]bool
@@ -3790,8 +3790,7 @@ so that while considering currently-live bugs we can expand the
 set of tiles in the "universe" to include the neighboring "dead"
 tiles that may come to life in this epoch:
 
-```
-
+```go
 func (g grid) adjacentBugs(t tile) int {
   bugs := 0
   for _, nbr := range g.adjacent(t) {
@@ -3838,7 +3837,7 @@ are those of the relevant grid above/below the current one. This
 is easy by just incrementing/decrementing the `depth` field of
 `tile`.
 
-```
+```go
 func (g grid) adjacentBugs(t tile) int {
   bugs := 0
   for _, nbr := range g.adjacent(t) {
