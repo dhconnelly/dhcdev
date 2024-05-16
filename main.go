@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 )
 
@@ -14,24 +15,17 @@ var (
 	port        = flag.Int("port", 8080, "port to bind to")
 )
 
-func build(outDir, srcDir, tmplPath string) {
-	if err := buildSite(outDir, srcDir, tmplPath); err != nil {
-		log.Fatalf("build: %s", err)
-	}
-}
-
-func serve(dir string, port int) {
-	if err := serveDirectory(dir, port); err != nil {
-		log.Fatalf("serve: %s", err)
-	}
-}
-
 func main() {
 	flag.Parse()
 	if *shouldBuild {
-		build(*outDir, *srcDir, *tmplPath)
+		if err := BuildSite(*outDir, *srcDir, *tmplPath); err != nil {
+			log.Fatalf("build: %s", err)
+		}
 	}
 	if *shouldServe {
-		serve(*outDir, *port)
+		addr := fmt.Sprintf("0.0.0.0:%d", *port)
+		if err := ServeDirectory(*outDir, addr); err != nil {
+			log.Fatalf("serve: %s", err)
+		}
 	}
 }

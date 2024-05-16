@@ -1,5 +1,5 @@
 module github.com/dhconnelly/dhc.dev
 
-go 1.21.3
+go 1.22.0
 
-require github.com/yuin/goldmark v1.7.1 // indirect
+require github.com/yuin/goldmark v1.7.1
