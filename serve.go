@@ -51,6 +51,8 @@ func ServeDirectory(dir string, port int) error {
 	// https://gowebexamples.com/
 	// https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/
 	// https://blog.cloudflare.com/exposing-go-on-the-internet
+	// TODO:
+	// https://cloud.google.com/stackdriver/docs/instrumentation/setup/go
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
 	log.Printf("serving files from %s at http://%s", dir, addr)
 	server := &http.Server{
