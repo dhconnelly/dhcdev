@@ -2,7 +2,7 @@
 
 # Daniel Connelly
 
-Staff Engineer at Airbnb in Paris. Previously Teads, Butterfly Network, Google, and MIT Lincoln Laboratory.  You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
+Staff Engineer at Airbnb in Paris. Generalist programmer, code should not be clever. Previously Teads, Butterfly Network, Google, and MIT Lincoln Laboratory. Lived in Atlanta, Charlotte, Boston, Munich 🇩🇪, New York, Raleigh, Paris 🇫🇷. You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
 
 ## Projects
 
