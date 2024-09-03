@@ -53,7 +53,7 @@ func ServeDirectory(dir string, port int) error {
 	// https://blog.cloudflare.com/exposing-go-on-the-internet
 	// TODO:
 	// https://cloud.google.com/stackdriver/docs/instrumentation/setup/go
-	addr := fmt.Sprintf("0.0.0.0:%d", port)
+	addr := fmt.Sprintf("127.0.0.1:%d", port)
 	log.Printf("serving files from %s at http://%s", dir, addr)
 	server := &http.Server{
 		Addr:         addr,
