@@ -6,12 +6,13 @@
 
 _February 1, 2023_
 
-I've decided to spend some time digging into Machine Learning and Deep Learning.
-I took an ML course in grad school but forgot most of it, and I worked on a
-system for Google Maps back in 2015-2016 that predicated hundreds of categorical
-labels for tens of millions of POIs, but I only understood the model at a
-superficial level, and it was the days before TensorFlow, so we had to build a
-lot of custom stuff. A lot has happened since then!
+Motivated by the ChatGPT release and the new gold rush, I've decided to spend
+some time refreshing my ML fundamentals. Back in 2015-2016 (before TensorFlow)
+I worked on what is now called MLOps for a large multi-label classification model
+for Google Maps, where I implemented distributed data processing pipelines,
+model versioning, deployment, and data and inference observability, all in C++,
+but I've lost touch with the modern ecosystem. In grad school I took several ML
+and classical AI courses but haven't had to revisit those fundamentals in a long time.
 
 I'll link notes and code below as I go along.
 
@@ -140,9 +141,9 @@ company](https://www.teads.com/) does a lot of ML, and the time I spent on this
 material made it possible for me to understand what kind of approaches we use
 and why and their tradeoffs, identify the largest ML engineering challenges
 we're facing, and have reasonable conversations with the team members about
-their work and its difficulty and impact. It also made it possible to reframe
-my previous work on a production ML system at Google in 2015-2016 into modern
-language and concepts.
+their work and its difficulty and impact. It also helped me to understand and
+apply my (existing but very outdated) ML knowledge and experience in terms of
+the modern ecosystem.
 
 My next step is to dig further into Deep Learning and building stuff. I'll
 make a new post about that :)
