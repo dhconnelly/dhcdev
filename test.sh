@@ -1,13 +1,13 @@
 #!/bin/bash
 
-PORT=7000
+PORT=7070
 
 test() {
     docker compose down && \
     docker compose up -d --build && \
-    sleep 3 && \
+    sleep 5 && \
     echo "checking service health at port $PORT..." && \
-    curl localhost:$PORT && \
+    curl -s -w %{http_code} -O localhost:$PORT/healthz | grep -q 200 &&
     docker compose down
 }
 
