@@ -1,5 +1,7 @@
 services:
   serve:
     build: .
+    environment:
+      PORT: 7000
     ports:
-      - "8080:8080"
+      - "7000:7000"

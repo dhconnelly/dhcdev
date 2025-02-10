@@ -16,6 +16,6 @@ COPY --from=build-stage /app/out/ ./out/
 COPY --from=build-stage /app/dhc.dev ./dhc.dev
 
 # serve
-EXPOSE 8080
+EXPOSE 7000
 USER nonroot:nonroot
-CMD ["./dhc.dev", "-build=false", "-port=8080"]
+CMD ["./dhc.dev", "-build=false", "-port=7000"]
