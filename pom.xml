@@ -158,6 +158,11 @@
       <artifactId>http4k-format-moshi</artifactId>
       <version>6.15.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.http4k</groupId>
+      <artifactId>http4k-config</artifactId>
+      <version>6.15.0.1</version>
+    </dependency>
 
   </dependencies>
 
