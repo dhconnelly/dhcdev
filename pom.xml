@@ -130,6 +130,35 @@
       <artifactId>kotlin-stdlib</artifactId>
       <version>${kotlin.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.jetbrains.kotlinx</groupId>
+      <artifactId>kotlinx-coroutines-core</artifactId>
+      <version>1.10.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.squareup.moshi</groupId>
+      <artifactId>moshi</artifactId>
+      <version>1.15.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.http4k</groupId>
+      <artifactId>http4k-core</artifactId>
+      <version>6.15.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.http4k</groupId>
+      <artifactId>http4k-server-jetty</artifactId>
+      <version>6.15.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.http4k</groupId>
+      <artifactId>http4k-format-moshi</artifactId>
+      <version>6.15.0.1</version>
+    </dependency>
+
   </dependencies>
 
 </project>
