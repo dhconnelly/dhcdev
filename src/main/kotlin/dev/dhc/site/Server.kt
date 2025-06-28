@@ -11,17 +11,15 @@ import org.http4k.routing.ResourceLoader.Companion.Directory
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.routing.static
+import java.nio.file.Path
 
-data class Context(
-    val directory: String,
-)
+data class Context(val dir: Path)
 
-class Server(private val context: Context): HttpHandler {
+class Server(ctx: Context): HttpHandler {
     val routes = routes(
         "/healthz" bind GET to { _: Request -> Response(OK) },
-        static(Directory(context.directory)),
+        static(Directory(ctx.dir.toString())),
     )
 
     override fun invoke(request: Request) = CatchLensFailure.then(routes)(request)
 }
-
