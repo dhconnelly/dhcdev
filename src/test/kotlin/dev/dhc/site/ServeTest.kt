@@ -1,5 +1,6 @@
 package dev.dhc.site
 
+import org.http4k.client.JavaHttpClient
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Status.Companion.NOT_FOUND
@@ -12,19 +13,23 @@ import kotlin.io.path.writeText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ServerTest {
+class ServeTest {
+    val client = JavaHttpClient()
+
     @Test
     fun testHealthz() {
-        val app = Server(Context(dir = Path("")))
-        val response = app(Request(GET, "/healthz"))
+        val srv = serve(port=0, dir="")
+        val response = client(Request(GET, "http://localhost:${srv.port()}/healthz"))
         assertEquals(OK, response.status)
+        srv.stop()
     }
 
     @Test
     fun testNotFound() {
-        val app = Server(Context(dir = Path("")))
-        val response = app(Request(GET, "foo"))
+        val srv = serve(port=0, dir="")
+        val response = client(Request(GET, "http://localhost:${srv.port()}/foo"))
         assertEquals(NOT_FOUND, response.status)
+        srv.stop()
     }
 
     @Test
@@ -35,9 +40,10 @@ class ServerTest {
         path.writeText(content)
         val rel = path.relativeTo(dir)
 
-        val app = Server(Context(dir = dir))
-        val response = app(Request(GET, "/$rel"))
+        val srv = serve(port=0, dir=dir.toString())
+        val response = client(Request(GET, "http://localhost:${srv.port()}/$rel"))
         assertEquals(OK, response.status)
         assertEquals(content, response.bodyString())
+        srv.stop()
     }
 }
