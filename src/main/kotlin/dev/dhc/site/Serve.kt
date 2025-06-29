@@ -14,19 +14,20 @@ import org.http4k.routing.static
 import org.http4k.server.Http4kServer
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import java.nio.file.Path
 
-data class Context(val dir: String)
+data class Context(val dir: Path)
 
 class Server(ctx: Context): HttpHandler {
     val routes = routes(
         "/healthz" bind GET to { _: Request -> Response(OK) },
-        static(Directory(ctx.dir)),
+        static(Directory(ctx.dir.toString())),
     )
 
     override fun invoke(request: Request) = CatchLensFailure.then(routes)(request)
 }
 
-fun serve(port: Int, dir: String): Http4kServer {
+fun serve(port: Int, dir: Path = Path.of(".")): Http4kServer {
     val srv = Server(Context(dir)).asServer(Jetty(port)).start()
     println("serving $dir at http://localhost:${srv.port()}")
     return srv

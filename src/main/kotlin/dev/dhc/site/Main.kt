@@ -7,6 +7,7 @@ import org.http4k.config.EnvironmentKey
 import org.http4k.lens.boolean
 import org.http4k.lens.int
 import org.http4k.lens.nonBlankString
+import kotlin.io.path.Path
 
 val port = EnvironmentKey.int().required("port")
 val dir = EnvironmentKey.nonBlankString().required("dir")
@@ -21,7 +22,7 @@ fun main() {
     val env = (JVM_PROPERTIES overrides ENV overrides defaults)
     println(env)
 
-    val buildDir = dir(env)
+    val buildDir = Path(dir(env))
     val serveDir = if (shouldBuild(env)) render(buildDir) else buildDir
     if (shouldServe(env)) serve(port(env), serveDir).block()
 }

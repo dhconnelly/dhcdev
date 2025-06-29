@@ -11,7 +11,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <kotlin.code.style>official</kotlin.code.style>
-    <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+    <language.version>21</language.version>
+    <kotlin.compiler.jvmTarget>${language.version}</kotlin.compiler.jvmTarget>
     <kotlin.version>2.1.20</kotlin.version>
     <main.class>dev.dhc.site.MainKt</main.class>
   </properties>
@@ -109,6 +110,14 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${language.version}</source>
+          <target>${language.version}</target>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -162,6 +171,12 @@
       <groupId>org.http4k</groupId>
       <artifactId>http4k-config</artifactId>
       <version>6.15.0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
+      <version>0.25.0</version>
     </dependency>
 
   </dependencies>

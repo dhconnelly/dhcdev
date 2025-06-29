@@ -18,7 +18,7 @@ class ServeTest {
 
     @Test
     fun testHealthz() {
-        val srv = serve(port=0, dir="")
+        val srv = serve(port=0)
         val response = client(Request(GET, "http://localhost:${srv.port()}/healthz"))
         assertEquals(OK, response.status)
         srv.stop()
@@ -26,7 +26,7 @@ class ServeTest {
 
     @Test
     fun testNotFound() {
-        val srv = serve(port=0, dir="")
+        val srv = serve(port=0)
         val response = client(Request(GET, "http://localhost:${srv.port()}/foo"))
         assertEquals(NOT_FOUND, response.status)
         srv.stop()
@@ -35,12 +35,11 @@ class ServeTest {
     @Test
     fun testStatic() {
         val dir = createTempDirectory()
-        val path = createTempFile(dir, suffix=".md")
         val content = "foo bar baz"
-        path.writeText(content)
+        val path = createTempFile(dir, suffix=".md").apply { writeText(content) }
         val rel = path.relativeTo(dir)
 
-        val srv = serve(port=0, dir=dir.toString())
+        val srv = serve(port=0, dir=dir)
         val response = client(Request(GET, "http://localhost:${srv.port()}/$rel"))
         assertEquals(OK, response.status)
         assertEquals(content, response.bodyString())
