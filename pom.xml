@@ -172,6 +172,17 @@
       <artifactId>http4k-config</artifactId>
       <version>6.15.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.http4k</groupId>
+      <artifactId>http4k-ops-micrometer</artifactId>
+      <version>6.15.0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+      <version>1.15.1</version>
+    </dependency>
 
     <dependency>
       <groupId>org.commonmark</groupId>
