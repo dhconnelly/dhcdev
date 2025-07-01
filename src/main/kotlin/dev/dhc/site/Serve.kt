@@ -27,8 +27,12 @@ class Server(ctx: Context): HttpHandler {
     override fun invoke(request: Request) = CatchLensFailure.then(routes)(request)
 }
 
-fun serve(port: Int, dir: Path = Path.of(".")): Http4kServer {
-    val srv = Server(Context(dir)).asServer(Jetty(port)).start()
-    println("serving $dir at http://localhost:${srv.port()}")
-    return srv
+class Servable(val serveDir: Path) {
+    fun at(port: Int): Http4kServer {
+        val srv = Server(Context(serveDir)).asServer(Jetty(port)).start()
+        println("serving $serveDir at http://localhost:${srv.port()}")
+        return srv
+    }
 }
+
+fun serve(serveDir: Path) = Servable(serveDir)

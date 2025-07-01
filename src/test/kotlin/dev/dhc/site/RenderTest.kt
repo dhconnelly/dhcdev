@@ -78,7 +78,8 @@ class RenderTest {
         )
 
         val srcDir = writeDirectory(content)
-        val dstDir = render(srcDir)
+        val dstDir = createTempDirectory()
+        render(srcDir).to(dstDir)
 
         for ((rel, want) in expected) {
             val path = dstDir / rel

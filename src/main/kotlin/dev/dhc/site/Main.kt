@@ -10,19 +10,24 @@ import org.http4k.lens.nonBlankString
 import kotlin.io.path.Path
 
 val port = EnvironmentKey.int().required("port")
-val dir = EnvironmentKey.nonBlankString().required("dir")
+val sourceDir = EnvironmentKey.nonBlankString().required("source_dir")
+val serveDir = EnvironmentKey.nonBlankString().required("serve_dir")
 val shouldBuild = EnvironmentKey.boolean().defaulted("build", true)
 val shouldServe = EnvironmentKey.boolean().defaulted("serve", true)
 val defaults = Environment.defaults(
     port of 9000,
-    dir of "./pages",
+    sourceDir of "./pages",
+    serveDir of "./out",
 )
 
 fun main() {
     val env = (JVM_PROPERTIES overrides ENV overrides defaults)
     println(env)
 
-    val buildDir = Path(dir(env))
-    val serveDir = if (shouldBuild(env)) render(buildDir) else buildDir
-    if (shouldServe(env)) serve(port(env), serveDir).block()
+    if (shouldBuild(env)) {
+        render(Path(sourceDir(env))).to(Path(serveDir(env)))
+    }
+    if (shouldServe(env)) {
+        serve(Path(serveDir(env))).at(port(env)).block()
+    }
 }

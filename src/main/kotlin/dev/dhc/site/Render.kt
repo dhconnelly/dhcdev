@@ -4,11 +4,11 @@ import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 import java.io.BufferedReader
 import java.nio.file.Path
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.copyTo
 import kotlin.io.path.createFile
 import kotlin.io.path.createParentDirectories
-import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.div
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
@@ -63,21 +63,25 @@ object PageMaker {
     }
 }
 
-@OptIn(ExperimentalPathApi::class)
-fun render(srcDir: Path): Path {
-    val dstDir = createTempDirectory()
-    println("building $srcDir to $dstDir")
-    for (path in srcDir.walk()) {
-        val rel = dstDir / path.relativeTo(srcDir)
-        if (path.extension == "md") {
-            val dst = rel.parent / (path.nameWithoutExtension + ".html")
-            dst.createParentDirectories().createFile()
-            PageMaker.render(path, dst)
-        } else {
-            rel.createParentDirectories()
-            path.copyTo(rel)
+class Renderable(val srcDir: Path) {
+    fun to(dstDir: Path) {
+        println("building $srcDir to $dstDir")
+        for (path in srcDir.walk()) {
+            val rel = dstDir / path.relativeTo(srcDir)
+            if (path.extension == "md") {
+                val dst = rel.parent / (path.nameWithoutExtension + ".html")
+                dst.createParentDirectories()
+                dst.deleteIfExists()
+                dst.createFile()
+                PageMaker.render(path, dst)
+            } else {
+                rel.createParentDirectories()
+                rel.deleteIfExists()
+                path.copyTo(rel)
+            }
         }
+        println("built $srcDir to $dstDir")
     }
-    println("built $srcDir to $dstDir")
-    return dstDir
 }
+
+fun render(srcDir: Path) = Renderable(srcDir)
