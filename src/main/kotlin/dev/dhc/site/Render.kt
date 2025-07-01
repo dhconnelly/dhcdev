@@ -16,27 +16,64 @@ import kotlin.io.path.relativeTo
 import kotlin.io.path.walk
 import kotlin.io.path.writeText
 
+class PageException(val why: String): Exception("invalid page: $why")
+
+fun tmpl(title: String, content: String) = """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>$title</title>
+            <meta charset="utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta property="og:title" content="$title" />
+            <meta name="author" content="Daniel Connelly" />
+            <meta property="og:locale" content="en_US" />
+            <meta property="og:type" content="website" />
+            <meta name="twitter:card" content="summary" />
+            <meta property="twitter:title" content="$title" />
+            <link rel="stylesheet" type="text/css" href="/css/main.css">
+        </head>
+        <body>
+            <main><div id="content">$content</div></main>
+        </body>
+    </html>
+    """.trimIndent()
+
+object PageMaker {
+    val parser: Parser = Parser.builder().build()
+    val renderer: HtmlRenderer = HtmlRenderer.builder().build()
+    val titlePat: Regex = """^=== ([^=]+) ===$""".toRegex()
+
+    fun render(from: Path, to: Path) {
+        from.reader().buffered().use { r ->
+            val title = titlePat.matchEntire(r.readLine())?.groups[1]?.value
+                ?: throw PageException("title")
+            // TODO: code highlighting
+            // TODO: anchors
+            val node = parser.parseReader(r)
+            val content = renderer.render(node)
+            val html = tmpl(title, content)
+            to.writeText(html)
+        }
+    }
+}
+
 @OptIn(ExperimentalPathApi::class)
 fun render(srcDir: Path): Path {
-    val parser = Parser.builder().build()
-    val renderer = HtmlRenderer.builder().build()
-
     val dstDir = createTempDirectory()
     println("building $srcDir to $dstDir")
     for (path in srcDir.walk()) {
         val rel = dstDir / path.relativeTo(srcDir)
         if (path.extension == "md") {
             val dst = rel.parent / (path.nameWithoutExtension + ".html")
-            val node = path.reader().use { parser.parseReader(it) }
-            val html = renderer.render(node)
-            dst.createParentDirectories().createFile().writeText(html)
+            dst.createParentDirectories().createFile()
+            PageMaker.render(path, dst)
         } else {
-            val dst = rel
-            dst.createParentDirectories()
-            path.copyTo(dst)
+            rel.createParentDirectories()
+            path.copyTo(rel)
         }
     }
-
     println("built $srcDir to $dstDir")
     return dstDir
 }
