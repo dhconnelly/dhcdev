@@ -10,7 +10,7 @@ import kotlin.io.path.writeText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-fun writeDirectory(tree: Map<Path, String>): Path {
+fun writeDirectory(tree: Map<String, String>): Path {
     val dir = createTempDirectory()
     for ((rel, content) in tree) {
         val path = dir / rel
@@ -25,6 +25,7 @@ class RenderTest {
     fun testRender() {
         val content = mapOf(
             "index.md" to """
+                === outline ===
                 # title
                 
                 blah blah
@@ -37,6 +38,9 @@ class RenderTest {
             """.trimIndent(),
 
             "blog/post1.md" to """
+                === list ===
+                
+                
                 1. foo
                 2. bar
                 3. baz
@@ -53,29 +57,12 @@ class RenderTest {
                 - this
                 - either
             """.trimIndent(),
-        ).mapKeys { Path.of(it.key) }
+        )
 
         val expected = mapOf(
-            "index.html" to """
-                <h1>title</h1>
-                <p>blah blah</p>
-                <h2>subtitle</h2>
-                <ul>
-                <li>a</li>
-                <li>b</li>
-                <li>c</li>
-                </ul>
+            "index.html" to PageMaker.render(content["index.md"]!!.reader().buffered()),
 
-            """.trimIndent(),
-
-            "blog/post1.html" to """
-                <ol>
-                <li>foo</li>
-                <li>bar</li>
-                <li>baz</li>
-                </ol>
-
-            """.trimIndent(),
+            "blog/post1.html" to PageMaker.render(content["blog/post1.md"]!!.reader().buffered()),
 
             "blog/img.png" to """
                 1. should
@@ -88,7 +75,7 @@ class RenderTest {
                 - this
                 - either
             """.trimIndent(),
-        ).mapKeys { Path.of(it.key) }
+        )
 
         val srcDir = writeDirectory(content)
         val dstDir = render(srcDir)

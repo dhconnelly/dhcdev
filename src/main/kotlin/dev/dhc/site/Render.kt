@@ -2,6 +2,7 @@ package dev.dhc.site
 
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
+import java.io.BufferedReader
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.copyTo
@@ -45,16 +46,19 @@ object PageMaker {
     val renderer: HtmlRenderer = HtmlRenderer.builder().build()
     val titlePat: Regex = """^=== ([^=]+) ===$""".toRegex()
 
+    fun render(r: BufferedReader): String {
+        val title = titlePat.matchEntire(r.readLine())?.groups[1]?.value
+            ?: throw PageException("failed to parse title")
+        // TODO: code highlighting
+        // TODO: anchors
+        val node = parser.parseReader(r)
+        val content = renderer.render(node)
+        return tmpl(title, content)
+    }
+
     fun render(from: Path, to: Path) {
         from.reader().buffered().use { r ->
-            val title = titlePat.matchEntire(r.readLine())?.groups[1]?.value
-                ?: throw PageException("title")
-            // TODO: code highlighting
-            // TODO: anchors
-            val node = parser.parseReader(r)
-            val content = renderer.render(node)
-            val html = tmpl(title, content)
-            to.writeText(html)
+            to.writeText(render(r))
         }
     }
 }
