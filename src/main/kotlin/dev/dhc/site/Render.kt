@@ -52,7 +52,6 @@ object PageMaker {
         val title = titlePat.matchEntire(r.readLine())?.groups[1]?.value
             ?: throw PageException("failed to parse title")
         // TODO: code highlighting
-        // TODO: anchors
         val node = parser.parseReader(r)
         val content = renderer.render(node)
         return tmpl(title, content)
