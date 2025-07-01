@@ -1,5 +1,6 @@
 package dev.dhc.site
 
+import org.commonmark.ext.heading.anchor.HeadingAnchorExtension
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 import java.io.BufferedReader
@@ -7,7 +8,6 @@ import java.nio.file.Path
 import kotlin.io.path.copyTo
 import kotlin.io.path.createFile
 import kotlin.io.path.createParentDirectories
-import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.div
 import kotlin.io.path.extension
@@ -42,9 +42,11 @@ fun tmpl(title: String, content: String) = """
     """.trimIndent()
 
 object PageMaker {
-    val parser: Parser = Parser.builder().build()
-    val renderer: HtmlRenderer = HtmlRenderer.builder().build()
     val titlePat: Regex = """^=== ([^=]+) ===$""".toRegex()
+    val parser: Parser = Parser.builder().build()
+    val renderer: HtmlRenderer = HtmlRenderer.builder()
+        .extensions(listOf(HeadingAnchorExtension.create()))
+        .build()
 
     fun render(r: BufferedReader): String {
         val title = titlePat.matchEntire(r.readLine())?.groups[1]?.value
