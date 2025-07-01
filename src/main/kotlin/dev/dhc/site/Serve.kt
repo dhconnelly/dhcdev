@@ -1,15 +1,9 @@
 package dev.dhc.site
 
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.micrometer.core.instrument.Measurement
-import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
-import org.http4k.core.Body
-import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -20,7 +14,6 @@ import org.http4k.filter.MicrometerMetrics
 import org.http4k.filter.ResponseFilters
 import org.http4k.filter.ServerFilters
 import org.http4k.format.ConfigurableMoshi
-import org.http4k.format.json
 import org.http4k.lens.BiDiBodyLens
 import org.http4k.routing.ResourceLoader.Companion.Directory
 import org.http4k.routing.bind
