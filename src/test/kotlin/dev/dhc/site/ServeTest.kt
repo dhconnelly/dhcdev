@@ -19,9 +19,9 @@ class ServeTest {
     val client = JavaHttpClient()
 
     @Test
-    fun testVarz() {
+    fun testHealthz() {
         val srv = serve().at(0)
-        val response = client(Request(GET, "http://localhost:${srv.port()}/varz"))
+        val response = client(Request(GET, "http://localhost:${srv.port()}/healthz"))
         assertEquals(OK, response.status)
         srv.stop()
     }
