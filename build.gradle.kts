@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.1.20"
     application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "dev.dhc"
@@ -35,4 +36,12 @@ tasks.test {
 
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.shadowJar {
+    manifest.attributes["Main-Class"] = application.mainClass.get()
+    archiveBaseName.set(project.name)
+    archiveClassifier.set("")
+    archiveVersion.set("")
+    mergeServiceFiles()
 }
