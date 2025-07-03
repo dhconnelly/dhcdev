@@ -1,21 +1,33 @@
 # syntax=docker/dockerfile:1
 
-# build the image
-FROM golang:1.22-bullseye AS build-stage
+# BUILD STAGE
+FROM amazoncorretto:21 AS build-stage
 WORKDIR /app
 
-# build the site
+## build the fat jar
 COPY . .
-RUN go build
-RUN ./dhc.dev -serve=false
+RUN ./gradlew clean installDist --no-daemon
+RUN find .
 
-# package the server and files
-FROM gcr.io/distroless/base-debian11 AS build-release-stage
+## pre-build the site
+ENV BUILD=TRUE
+ENV SERVE=FALSE
+ENV SOURCE_DIR=./pages
+ENV SERVE_DIR=./out
+RUN ./build/install/app/bin/app
+
+# RELEASE STAGE
+FROM amazoncorretto:21 AS release-stage
 WORKDIR /app
-COPY --from=build-stage /app/out/ ./out/
-COPY --from=build-stage /app/dhc.dev ./dhc.dev
 
-# serve
+## copy over the pre-built site
+COPY --from=build-stage /app/out/ ./out/
+COPY --from=build-stage /app/build/install/app ./
+RUN find .
+
+## serve
 EXPOSE 7070
-USER nonroot:nonroot
-CMD ["./dhc.dev", "-build=false", "-port=7070"]
+ENV PORT=7070
+ENV BUILD=FALSE
+ENV SERVE=TRUE
+CMD ["./bin/app"]

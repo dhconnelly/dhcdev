@@ -4,10 +4,13 @@ Source code and static content for my personal web site.
 
 ## Usage
 
-    # build the site and start the server
-    go run .
+    # run tests
+    ./gradlew test
 
-    # navigate to http://localhost:8080
+    # build the site and start the server
+    ./gradlew run
+
+    # now navigate to http://localhost:9000
 
 ## Run integration tests
 
@@ -15,7 +18,7 @@ Source code and static content for my personal web site.
 
 ## Deploy to production
 
-The site is served on GCP Cloud Run. It will automatically pick up new pushes
+The site is served via Docker on Digital Ocean. It will automatically pick up new pushes
 to the main branch and deploy them after merge.
 
 ## License

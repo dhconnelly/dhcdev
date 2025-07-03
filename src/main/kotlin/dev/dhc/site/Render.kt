@@ -71,11 +71,13 @@ class Renderable(val srcDir: Path) {
             val rel = dstDir / path.relativeTo(srcDir)
             if (path.extension == "md") {
                 val dst = rel.parent / (path.nameWithoutExtension + ".html")
+                println("rendering $path to $dst")
                 dst.createParentDirectories()
                 dst.deleteIfExists()
                 dst.createFile()
                 PageMaker.render(path, dst)
             } else {
+                println("copying $path to $rel")
                 rel.createParentDirectories()
                 rel.deleteIfExists()
                 path.copyTo(rel)

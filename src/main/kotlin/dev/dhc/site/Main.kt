@@ -22,12 +22,6 @@ val defaults = Environment.defaults(
 
 fun main() {
     val env = (JVM_PROPERTIES overrides ENV overrides defaults)
-    println(env)
-
-    if (shouldBuild(env)) {
-        render(Path(sourceDir(env))).to(Path(serveDir(env)))
-    }
-    if (shouldServe(env)) {
-        serve(Path(serveDir(env))).at(port(env)).block()
-    }
+    if (shouldBuild(env)) render(Path(sourceDir(env))).to(Path(serveDir(env)))
+    if (shouldServe(env)) serve(Path(serveDir(env))).at(port(env)).block()
 }

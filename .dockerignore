@@ -1,2 +1,8 @@
-**/target
-dhcdev
+.git
+.github/
+.gradle/
+.idea/
+.kotlin/
+build/
+*.iml
+*.class
