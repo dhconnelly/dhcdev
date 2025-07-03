@@ -4,10 +4,14 @@
 FROM amazoncorretto:21 AS build-stage
 WORKDIR /app
 
+## initialize gradle
+COPY ./gradle ./gradle
+COPY ./gradlew .
+RUN ./gradlew
+
 ## build the fat jar
 COPY . .
 RUN ./gradlew clean installDist --no-daemon
-RUN find .
 
 ## pre-build the site
 ENV BUILD=TRUE
@@ -23,7 +27,6 @@ WORKDIR /app
 ## copy over the pre-built site
 COPY --from=build-stage /app/out/ ./out/
 COPY --from=build-stage /app/build/install/app ./
-RUN find .
 
 ## serve
 EXPOSE 7070
