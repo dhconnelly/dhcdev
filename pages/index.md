@@ -6,6 +6,7 @@ Staff Engineer at Airbnb in Paris. You can find me on [GitHub](https://github.co
 
 ## Blog
 
+- [Gone](/gone.html)
 - [Learning Machine Learning](/ml-notes.html)
 - [Advent of Code 2019: day-by-day commentary](/advent-of-code-2019-commentary.html)
 - [Advent of Code 2019: retrospective](/advent-of-code-2019-retrospective.html)
