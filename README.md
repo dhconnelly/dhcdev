@@ -18,7 +18,7 @@ Source code and static content for my personal web site.
 
 ## Deploy to production
 
-The site is served via Docker on Digital Ocean. It will automatically pick up new pushes
+The site is hosted on Digital Ocean. It will automatically pick up new pushes
 to the main branch and deploy them after merge.
 
 ## License
