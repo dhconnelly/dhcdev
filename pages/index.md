@@ -2,7 +2,7 @@
 
 # Daniel Connelly
 
-Staff Engineer at Airbnb in Paris. You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
+Staff Engineer at Google in New York, working on quality and evals for AI in Google Maps. You can find me on [GitHub](https://github.com/dhconnelly/), [LinkedIn](https://www.linkedin.com/in/dhconnelly/), or send me an [email](mailto:dhconnelly@gmail.com).
 
 ## Blog
 
