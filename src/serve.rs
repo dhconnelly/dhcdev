@@ -86,12 +86,37 @@ pub fn app(serve_dir: &Path) -> Router {
 }
 
 pub async fn serve(serve_dir: &Path, port: u16) {
+    serve_until(serve_dir, port, shutdown_signal()).await;
+}
+
+async fn shutdown_signal() {
+    use tokio::signal::unix::{signal, SignalKind};
+
+    let mut sigint = signal(SignalKind::interrupt()).unwrap();
+    let mut sigterm = signal(SignalKind::terminate()).unwrap();
+
+    tokio::select! {
+        _ = sigint.recv() => {}
+        _ = sigterm.recv() => {}
+    }
+}
+
+async fn serve_until(
+    serve_dir: &Path,
+    port: u16,
+    shutdown: impl std::future::Future<Output = ()> + Send + 'static,
+) {
     let app = app(serve_dir);
-    println!("serving {serve_dir:?} at http://localhost:{port}");
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}"))
         .await
         .unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    println!("serving {serve_dir:?} at http://localhost:{}", addr.port());
+    axum::serve(listener, app)
+        .with_graceful_shutdown(shutdown)
+        .await
+        .unwrap();
+    println!("server shut down");
 }
 
 #[cfg(test)]
@@ -150,5 +175,49 @@ mod tests {
             .unwrap();
         let v: serde_json::Value = serde_json::from_slice(&body).unwrap();
         assert_eq!(v["requests_total"], 0);
+    }
+
+    #[tokio::test]
+    async fn test_graceful_shutdown() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+        let tmp = TempDir::new().unwrap();
+        std::fs::write(tmp.path().join("hello.txt"), "hi").unwrap();
+
+        // Bind first so we know the port
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let port = listener.local_addr().unwrap().port();
+
+        let (shutdown_tx, shutdown_rx) = tokio::sync::oneshot::channel::<()>();
+
+        let path = tmp.path().to_path_buf();
+        let server = tokio::spawn(async move {
+            let app = app(&path);
+            axum::serve(listener, app)
+                .with_graceful_shutdown(async { shutdown_rx.await.ok(); })
+                .await
+                .unwrap();
+        });
+
+        // Verify server is responding
+        let mut conn = tokio::net::TcpStream::connect(format!("127.0.0.1:{port}"))
+            .await
+            .unwrap();
+        conn.write_all(b"GET /healthz HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .await
+            .unwrap();
+        let mut buf = vec![0u8; 1024];
+        let n = conn.read(&mut buf).await.unwrap();
+        let response = String::from_utf8_lossy(&buf[..n]);
+        assert!(response.contains("200 OK"));
+
+        // Signal shutdown
+        shutdown_tx.send(()).unwrap();
+
+        // Server should exit cleanly
+        tokio::time::timeout(std::time::Duration::from_secs(5), server)
+            .await
+            .expect("server did not shut down in time")
+            .unwrap();
     }
 }
