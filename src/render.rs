@@ -1,9 +1,12 @@
-use comrak::{markdown_to_html, Options};
+use comrak::plugins::syntect::SyntectAdapterBuilder;
+use comrak::{markdown_to_html_with_plugins, Options, Plugins};
 use minijinja::{context, Environment};
 use regex::Regex;
 use std::fs;
 use std::path::Path;
 use std::sync::LazyLock;
+use syntect::highlighting::ThemeSet;
+use syntect::html::{css_for_theme_with_class_style, ClassStyle};
 
 #[derive(Debug, thiserror::Error)]
 pub enum RenderError {
@@ -29,6 +32,7 @@ const PAGE_TEMPLATE: &str = r#"<!DOCTYPE html>
         <meta name="twitter:card" content="summary" />
         <meta property="twitter:title" content="{{ title }}" />
         <link rel="stylesheet" type="text/css" href="/css/main.css">
+        <style>{{ syntax_css }}</style>
     </head>
     <body>
         <main><div id="content">{{ content }}</div></main>
@@ -44,13 +48,26 @@ pub fn template_env() -> Environment<'static> {
     env
 }
 
-fn render_markdown(source: &str) -> String {
-    let mut options = Options::default();
-    options.extension.header_ids = Some(String::new());
-    markdown_to_html(source, &options)
+pub fn generate_syntax_css() -> String {
+    let theme_set = ThemeSet::load_defaults();
+    let theme = &theme_set.themes["base16-eighties.dark"];
+    css_for_theme_with_class_style(theme, ClassStyle::Spaced).unwrap()
 }
 
-pub fn render_page(env: &Environment, source: &str) -> Result<String, RenderError> {
+fn render_markdown(source: &str) -> String {
+    let adapter = SyntectAdapterBuilder::new().css().build();
+    let mut options = Options::default();
+    options.extension.header_ids = Some(String::new());
+    let mut plugins = Plugins::default();
+    plugins.render.codefence_syntax_highlighter = Some(&adapter);
+    markdown_to_html_with_plugins(source, &options, &plugins)
+}
+
+pub fn render_page(
+    env: &Environment,
+    source: &str,
+    syntax_css: &str,
+) -> Result<String, RenderError> {
     let first_line = source
         .lines()
         .next()
@@ -65,11 +82,12 @@ pub fn render_page(env: &Environment, source: &str) -> Result<String, RenderErro
     let content = render_markdown(rest);
 
     let tmpl = env.get_template("page").unwrap();
-    Ok(tmpl.render(context! { title, content })?)
+    Ok(tmpl.render(context! { title, content, syntax_css })?)
 }
 
 pub fn build(source_dir: &Path, dest_dir: &Path) -> Result<(), RenderError> {
     let env = template_env();
+    let syntax_css = generate_syntax_css();
     println!("building {source_dir:?} to {dest_dir:?}");
 
     for entry in walk(source_dir)? {
@@ -83,7 +101,7 @@ pub fn build(source_dir: &Path, dest_dir: &Path) -> Result<(), RenderError> {
                 fs::create_dir_all(parent)?;
             }
             let source = fs::read_to_string(&entry)?;
-            let html = render_page(&env, &source)?;
+            let html = render_page(&env, &source, &syntax_css)?;
             fs::write(&dest, html)?;
         } else {
             let dest = dest_dir.join(rel);
@@ -127,24 +145,26 @@ mod tests {
         template_env()
     }
 
+    fn test_render(source: &str) -> Result<String, RenderError> {
+        let env = test_env();
+        render_page(&env, source, "")
+    }
+
     #[test]
     fn test_parse_title() {
-        let env = test_env();
-        let html = render_page(&env, "=== My Title ===\n\nHello world").unwrap();
+        let html = test_render("=== My Title ===\n\nHello world").unwrap();
         assert!(html.contains("<title>My Title</title>"));
     }
 
     #[test]
     fn test_parse_title_fails_without_title() {
-        let env = test_env();
-        assert!(render_page(&env, "no title here\n\nHello world").is_err());
+        assert!(test_render("no title here\n\nHello world").is_err());
     }
 
     #[test]
     fn test_markdown_rendering() {
-        let env = test_env();
         let html =
-            render_page(&env, "=== Test ===\n\n# Heading\n\nA paragraph with **bold**.").unwrap();
+            test_render("=== Test ===\n\n# Heading\n\nA paragraph with **bold**.").unwrap();
         assert!(html.contains("<h1"));
         assert!(html.contains("Heading"));
         assert!(html.contains("<strong>bold</strong>"));
@@ -152,20 +172,33 @@ mod tests {
 
     #[test]
     fn test_heading_anchors() {
-        let env = test_env();
-        let html = render_page(&env, "=== Test ===\n\n## My Section").unwrap();
+        let html = test_render("=== Test ===\n\n## My Section").unwrap();
         assert!(html.contains(r#"id="my-section""#));
     }
 
     #[test]
     fn test_template_structure() {
-        let env = test_env();
-        let html = render_page(&env, "=== Page Title ===\n\nContent here.").unwrap();
+        let html = test_render("=== Page Title ===\n\nContent here.").unwrap();
         assert!(html.contains("<!DOCTYPE html>"));
         assert!(html.contains(r#"<meta charset="utf-8" />"#));
         assert!(html.contains(r#"href="/css/main.css""#));
         assert!(html.contains(r#"<div id="content">"#));
         assert!(html.contains("Daniel Connelly"));
+    }
+
+    #[test]
+    fn test_syntax_highlighting() {
+        let env = test_env();
+        let source = "=== Test ===\n\n```go\nfunc main() {}\n```";
+        let html = render_page(&env, source, "").unwrap();
+        assert!(html.contains("syntax-highlighting"));
+        assert!(html.contains("class=\""));
+    }
+
+    #[test]
+    fn test_syntax_css_generation() {
+        let css = generate_syntax_css();
+        assert!(css.contains(".code"));
     }
 
     #[test]
