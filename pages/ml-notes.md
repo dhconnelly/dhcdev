@@ -20,7 +20,7 @@ I'll link notes and code below as I go along.
 
 ## Table of Contents
 
--   [Google's Machine Learning Crash Course](#google-s-machine-learning-crash-course)
+-   [Google's Machine Learning Crash Course](#googles-machine-learning-crash-course)
 -   [Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow](#hands-on-machine-learning-with-scikit-learn-keras-and-tensorflow) (abandoned)
 -   [Independent practice](#independent-practice)
 -   [Coursera Machine Learning Specialization](#coursera-machine-learning-specialization)
