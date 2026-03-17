@@ -5,10 +5,10 @@ Source code and static content for my personal web site.
 ## Usage
 
     # run tests
-    ./gradlew test
+    cargo test
 
     # build the site and start the server
-    ./gradlew run
+    cargo run
 
     # now navigate to http://localhost:9000
 

@@ -1,8 +1,3 @@
 .git
 .github/
-.gradle/
-.idea/
-.kotlin/
-build/
-*.iml
-*.class
+target/
