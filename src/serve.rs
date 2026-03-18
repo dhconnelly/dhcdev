@@ -17,7 +17,6 @@ struct Metrics {
     requests_client_error: u64,
     requests_server_error: u64,
     request_duration_ms_sum: u64,
-    request_duration_ms_count: u64,
 }
 
 #[derive(Clone)]
@@ -64,7 +63,6 @@ async fn logging_middleware(
         metrics.requests_server_error += 1;
     }
     metrics.request_duration_ms_sum += duration_ms;
-    metrics.request_duration_ms_count += 1;
 
     response
 }

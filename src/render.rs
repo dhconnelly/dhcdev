@@ -32,7 +32,7 @@ const PAGE_TEMPLATE: &str = r#"<!DOCTYPE html>
         <meta name="twitter:card" content="summary" />
         <meta property="twitter:title" content="{{ title }}" />
         <link rel="stylesheet" type="text/css" href="/css/main.css">
-        <style>{{ syntax_css }}</style>
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css">
     </head>
     <body>
         <main><div id="content">{{ content }}</div></main>
@@ -66,7 +66,6 @@ fn render_markdown(source: &str) -> String {
 pub fn render_page(
     env: &Environment,
     source: &str,
-    syntax_css: &str,
 ) -> Result<String, RenderError> {
     let first_line = source
         .lines()
@@ -82,13 +81,16 @@ pub fn render_page(
     let content = render_markdown(rest);
 
     let tmpl = env.get_template("page").unwrap();
-    Ok(tmpl.render(context! { title, content, syntax_css })?)
+    Ok(tmpl.render(context! { title, content })?)
 }
 
 pub fn build(source_dir: &Path, dest_dir: &Path) -> Result<(), RenderError> {
     let env = template_env();
-    let syntax_css = generate_syntax_css();
     println!("building {source_dir:?} to {dest_dir:?}");
+
+    let css_dir = dest_dir.join("css");
+    fs::create_dir_all(&css_dir)?;
+    fs::write(css_dir.join("syntax.css"), generate_syntax_css())?;
 
     for entry in walk(source_dir)? {
         let rel = entry.strip_prefix(source_dir).unwrap();
@@ -101,7 +103,7 @@ pub fn build(source_dir: &Path, dest_dir: &Path) -> Result<(), RenderError> {
                 fs::create_dir_all(parent)?;
             }
             let source = fs::read_to_string(&entry)?;
-            let html = render_page(&env, &source, &syntax_css)?;
+            let html = render_page(&env, &source)?;
             fs::write(&dest, html)?;
         } else {
             let dest = dest_dir.join(rel);
@@ -147,7 +149,7 @@ mod tests {
 
     fn test_render(source: &str) -> Result<String, RenderError> {
         let env = test_env();
-        render_page(&env, source, "")
+        render_page(&env, source)
     }
 
     #[test]
@@ -190,7 +192,7 @@ mod tests {
     fn test_syntax_highlighting() {
         let env = test_env();
         let source = "=== Test ===\n\n```go\nfunc main() {}\n```";
-        let html = render_page(&env, source, "").unwrap();
+        let html = render_page(&env, source).unwrap();
         assert!(html.contains("syntax-highlighting"));
         assert!(html.contains("class=\""));
     }
@@ -223,5 +225,8 @@ mod tests {
 
         let css = fs::read_to_string(dst.path().join("css/main.css")).unwrap();
         assert_eq!(css, "body { color: white; }");
+
+        let syntax_css = fs::read_to_string(dst.path().join("css/syntax.css")).unwrap();
+        assert!(syntax_css.contains(".code"));
     }
 }
